@@ -1,0 +1,28 @@
+//
+   Created by admin on 11.06.2016.
+
+div(class="mui-container login-holder" ng-controller="login" ng-cloak)
+    div(class="mui-panel login-pane")
+        div
+            img(src="./img/logo.png")
+        p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd.<br> B2B online portal.
+        div
+            h2(class="md-display-1") Sign in
+        md-content(md-theme="default" layout-gt-sm="row" layout-padding)
+            div
+                md-input-container(class="md-block" flex-gt-sm)
+                    label Login
+                    input(required name="login" ng-model="user.login")
+                    div(ng-message="login.$error")
+                        div(ng-message="required") Login required
+                md-input-container(class="md-block" flex-gt-sm)
+                    label Password
+                    input(required type="password" name="password" ng-model="user.password")
+                    div(ng-message="password.$error")
+                        div(ng-message="required") Password required
+                p(class="mui--text-right")
+                    a(href="{{links.recovery_url}}") Forgot password?
+                div
+                    md-button(class="md-raised md-primary" ng-disabled="true") SIGN IN
+                div
+                    md-button(class="md-primary") BECOME OUR CUSTOMER
