@@ -13,6 +13,7 @@ var lr = require('tiny-lr'), // Минивебсервер для livereload
     concat = require('gulp-concat'), // Склейка файлов
     rename = require('gulp-rename'), // Переименование файлов
     connect = require('connect'), // Webserver
+    serveStatic = require('serve-static'),
     path = require('path'),
     fs = require('fs'),
     server = lr();
@@ -157,7 +158,7 @@ gulp.task('images', function() {
 gulp.task('http-server', function() {
     connect()
         .use(require('connect-livereload')())
-        .use(connect.static('./public'))
+        .use(serveStatic('./public'))
         .listen(port);
 
     console.log('Server listening on http://localhost:'+port);
