@@ -95,12 +95,14 @@ var nonStandardModules = {
             gulp.src([
                 path.join(moduleBase, 'js/angular.min.js'),
                 path.join(moduleBase, 'js/angular/angular.min.js'),
+                path.join(moduleBase, 'js/auth.js'), // auth скрывается в недрах Angular'а
                 path.join(moduleBase, 'js/angular/angular-route.min.js'),
                 path.join(moduleBase, 'js/angular/angular-aria.min.js'),
                 path.join(moduleBase, 'js/angular/angular-animate.min.js'),
                 path.join(moduleBase, 'js/angular/angular-messages.min.js'),
                 path.join(moduleBase, 'js/angular/angular-material.min.js'),
-                path.join(moduleBase, 'js/angular/mui.min.js')
+                path.join(moduleBase, 'js/angular/mui.min.js'),
+                path.join(moduleBase, 'js/greensock/minified/TweenMax.min.js')
             ])
                 .pipe(concat('angular.min.js'))
                 .pipe(gulp.dest(path.join(publishBase, 'js')))
