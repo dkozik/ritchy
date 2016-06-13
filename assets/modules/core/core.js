@@ -43,8 +43,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
 
     var modulesBase = './modules';
 
+    /**
+     * Сервис реализующий логику сообщений и форм ввода/выбора значений
+     */
     RitchyApp.factory('RitchyDialog', ['$mdDialog', '$mdMedia', function($mdDialog, $mdMedia) {
         return {
+            // Показ инфомрационного уведомления на экране
             showAlert: function( title, text, callback ) {
                 $mdDialog.show(
                     $mdDialog.alert()
@@ -58,6 +62,9 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
         }
     }]);
 
+    /**
+     * Сервис реализующий логику работы с серверным API
+     */
     RitchyApp.factory('RitchyApi', ['$http', function($http) {
 
         var apiUrl = 'http://localhost/ritchy/api';
@@ -71,6 +78,9 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
         }
     }]);
 
+    /**
+     * Сервис реализующий логику работы с сессией
+     */
     RitchyApp.factory('RitchyAuth', ['$http', 'RitchyDialog', 'RitchyApi', function( $http, RitchyDialog, RitchyApi ) {
         // Service internal params
         var isUserAuth = false,
@@ -114,10 +124,13 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
         return {
             doLogin: function() {
                 // Программная авторизация
+                // TODO: реализовать метод по мере необходимости
             },
+            // Выход из приложения
             doLogout: function( callback ) {
                 requestLogout(callback);
             },
+            // Получение статуса авторизации пользователя в системе
             isUserAuth: function( callback ) {
                 requestLoginStat(callback, true);
             }
@@ -125,6 +138,9 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
     }]);
 
 
+    /**
+     * Контроллер реализующий логику основной страницы ядра
+     */
     RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', function($scope, $http, RitchyAuth) {
         function sendStat() {
             var img = new Image();
@@ -133,9 +149,13 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
 //        console.log('RitchyAuth.isUserAuth: ', RitchyAuth.isUserAuth());
     }]);
 
+    /**
+     * Настройка маршрутизации
+     */
     RitchyApp.config(['$locationProvider','$routeProvider',
         function($location, $routeProvider) {
 
+            // Предварительная проверка доступности маршрута
             var _checkRoute = function($route, $http, onSuccess, onError) {
                 var module = $route.current.params.module || 'core';
                 var view = $route.current.params.view || 'index';
@@ -193,6 +213,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
                         });
                     }]
                 })
+                .when('/recovery', {
+                    templateUrl: modulesBase+'/recovery/views/index.html',
+                    resolve: {
+                        check: checkRoute
+                    }
+                })
                 .when('/:module/:view/:params*', {
                     templateUrl: function(params) {
                         // TODO: need to setup params.params to current controller of calculated view
@@ -200,30 +226,21 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
                     },
                     resolve: {
                         check: checkAuthRoute
-                    },
-                    controller: ['$route', function($route) {
-                        return $route.current.params.module;
-                    }]
+                    }
                 }).when('/:module/:view', {
                 templateUrl: function( params ) {
                     return modulesBase+'/'+(params.module || 'core')+'/views/'+(params.view || 'index')+'.html';
                 },
                 resolve: {
                     check: checkAuthRoute
-                },
-                controller: ['$route', function($route) {
-                    return $route.current.params.module;
-                }]
+                }
             }).when('/:module', {
                 templateUrl: function( params ) {
                     return modulesBase+'/'+(params.module || 'core')+'/views/index.html';
                 },
                 resolve: {
                     check: checkAuthRoute
-                },
-                controller: ['$route', function($route) {
-                    return $route.current.params.module;
-                }]
+                }
             });
         }]);
 })();

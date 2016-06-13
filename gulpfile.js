@@ -23,27 +23,14 @@ var modulesBase = './assets/modules';
 var publishFolder = './public';
 var modulesQueue = ['core'];
 
-// Собираем Stylus (динамические css)
-gulp.task('stylus', function() {
-    gulp.src('./assets/stylus/index.styl')
-        .pipe(stylus({
-//            use: ['nib']
-        })) // собираем stylus
-        .on('error', console.log) // Если есть ошибки, выводим и продолжаем
-        .pipe(myth()) // добавляем префиксы - http://www.myth.io/
-        .pipe(gulp.dest('./public/css/')) // записываем css
-        .pipe(livereload(server)); // даем команду на перезагрузку css
-});
-
-// Сборка CSS
-gulp.task('css', function() {
-    gulp.src('./assets/css/*.css')
-        .pipe(concat('ritchy.css'))
-        .pipe(gulp.dest('./public/css'))
-        .pipe(livereload(server));
-});
+// Modules cache
+var modulesFolders = [];
 
 function getFolders(dir) {
+    if (modulesFolders.length>0) {
+        return modulesFolders.slice();
+    }
+
     var folders = fs.readdirSync(dir)
         .filter(function(file) {
             return fs.statSync(path.join(dir, file)).isDirectory();
@@ -55,8 +42,36 @@ function getFolders(dir) {
         var offset = folders.indexOf(module);
         if (offset>=0) folders.splice(offset, 1);
     });
-    return modulesQueue.concat(folders);
+    modulesFolders = modulesQueue.concat(folders);
+    return modulesFolders.slice();
 }
+
+// Собираем Stylus (динамические css)
+gulp.task('stylus', function() {
+    var modulesSTYL = getFolders(modulesBase).map(function( module ) {
+        return './'+path.join(modulesBase, module)+path.sep+'*.styl';
+    });
+    gulp.src(['./assets/stylus/index.styl'].concat(modulesSTYL))
+        .pipe(concat('index.styl'))
+        .pipe(stylus({
+//            use: ['nib']
+        })) // собираем stylus
+        .on('error', console.log) // Если есть ошибки, выводим и продолжаем
+        .pipe(myth()) // добавляем префиксы - http://www.myth.io/
+        .pipe(gulp.dest('./public/css/')) // записываем css
+        .pipe(livereload(server)); // даем команду на перезагрузку css
+});
+
+// Сборка CSS
+gulp.task('css', function() {
+    var modulesCSS = getFolders(modulesBase).map(function( module ) {
+        return './'+path.join(modulesBase, module)+path.sep+'*.css';
+    });
+    gulp.src(['./assets/css/*.css'].concat(modulesCSS))
+        .pipe(concat('ritchy.css'))
+        .pipe(gulp.dest('./public/css'))
+        .pipe(livereload(server));
+});
 
 var compileMethods = {
     jade: function(moduleBase, publishBase, folder) {
@@ -178,8 +193,6 @@ gulp.task('watch', function() {
     server.listen(35729, function(err) {
         if (err) return console.log(err);
 
-        var modules = getFolders(modulesBase);
-
         gulp.watch('assets/stylus/**/*.styl', function() {
             gulp.run('stylus');
         });
@@ -189,12 +202,12 @@ gulp.task('watch', function() {
         });
 
         // Обход всех JS в модулях
-        gulp.watch(modules.slice().map(function( module ) {
+        gulp.watch(getFolders(modulesBase).map(function( module ) {
             return './'+path.join(modulesBase, module)+path.sep+'*.js';
         }), ['js']);
 
         // Обход модулей на предмет изменения view и кастомных JS
-        modules.slice().map(function( folder ) {
+        getFolders(modulesBase).map(function( folder ) {
             var moduleBase = './'+path.join(modulesBase, folder);
             var publishBase = './'+path.join(publishFolder, 'modules', folder);
             var nonStandardModule = nonStandardModules[folder];
@@ -206,6 +219,8 @@ gulp.task('watch', function() {
                     compileMethods.jade(moduleBase, publishBase, folder);
                 }
             });
+
+            gulp.watch(moduleBase+path.sep+'**'+path.sep+'*.styl', ['stylus']);
 
             // Следим за нестандартными модулями
             if (nonStandardModule && nonStandardModule.js) {

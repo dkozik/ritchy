@@ -3,18 +3,14 @@
  */
 (function() {
 
-    RitchyApp.controller('login', ['$scope', '$element', 'RitchyApi', 'RitchyDialog', '$location',
-        function($scope, $element, RitchyApi, RitchyDialog, $location) {
+    RitchyApp.controller('login', ['$scope', '$element', 'RitchyApi', 'RitchyDialog', '$location', '$rootScope',
+        function($scope, $element, RitchyApi, RitchyDialog, $location, $rootScope) {
 
         // Login panel animation
         var tl = new TimelineMax();
         TweenLite.set($element, {scale: 0.5, rotation: 0.1, autoAlpha:0});
         tl.to($element, 0.3, {autoAlpha: 1});
         tl.to($element, 0.5, {scale: 1, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
-
-        $scope.links = {
-            recovery_url: '#/recovery'
-        };
 
         $scope.user = {
             login: 'admin',
@@ -35,6 +31,18 @@
                 }, function onError(response) {
                         RitchyDialog.showAlert('Login error', 'Unknown api error: '+response);
                 });
+            },
+            doRecovery: function() {
+                var tl = new TimelineMax();
+                TweenLite.set($element, {scale: 1, rotation: 0.1, autoAlpha: 1});
+                tl.to($element, 0.2, {autoAlpha: 0});
+                tl.to($element, 0.2, {scale: 0.5, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+                tl.call(function() {
+                    $rootScope.$apply(function() {
+                        $location.path('/recovery');
+                    });
+                });
+                return false;
             }
         };
 

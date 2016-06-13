@@ -21,7 +21,7 @@ div(class="mui-container login-holder" ng-controller="login" ng-cloak)
                     div(ng-message="password.$error")
                         div(ng-message="required") Password required
                 p(class="mui--text-right")
-                    a(href="{{links.recovery_url}}") Forgot password?
+                    a(ng-href="javascript: return false;" ng-click="user.doRecovery()") Forgot password?
                 div
                     md-button(class="md-raised md-primary" ng-disabled="!user.canLogin" ng-click="user.doLogin()") SIGN IN
                 div
