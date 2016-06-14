@@ -1,19 +1,29 @@
 .recovery-holder {
   justify-content: center;
   text-align: center;
+  height: 100%;
+}
+
+.recovery-holder .recovery-pane-space {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
 }
 
 .recovery-pane {
-  width: var(--login-panel-width);
+  width: var(--recovery-panel-width);
   display: inline-block;
+  vertical-align: middle;
   text-align: left;
-  margin-top: 10px;
-  width: 500px;
   padding: 20px;
 }
 
 .recovery-pane div.recovery-pane-header {
   margin-bottom: 30px;
+}
+
+.recovery-pane div.recovery-pane-header table {
+  width: 100%;
 }
 
 .recovery-pane div.recovery-pane-header div {
@@ -24,9 +34,10 @@
 
 .recovery-pane div.recovery-pane-header img {
   width: 170px;
-  margin: 10px;
 }
 
-.recovery-pane button {
-  width: 95%;
+.recovery-pane button#btn_recovery {
+  width: 100%;
+  margin: 0;
+  background-color: rgba(0, 153, 255, 1);
 }

@@ -8,9 +8,10 @@
 
         // Login panel animation
         var tl = new TimelineMax();
-        TweenLite.set($element, {scale: 0.5, autoAlpha:0});
-        tl.to($element, 0.3, {autoAlpha: 1});
-        tl.to($element, 0.5, {scale: 1, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+        var target = document.querySelector('div.login-pane');
+        TweenLite.set(target, {scale: 0.5, autoAlpha:0});
+        tl.to(target, 0.3, {autoAlpha: 1});
+        tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
 
         $scope.user = {
             login: 'admin',

@@ -2,6 +2,7 @@
    Created by admin on 13.06.2016.
 
 div(class="mui-container recovery-holder" ng-controller="recovery" ng-cloak)
+    span(class="recovery-pane-space")
     div(class="mui-panel recovery-pane")
         div(class="recovery-pane-header")
             table
@@ -20,4 +21,4 @@ div(class="mui-container recovery-holder" ng-controller="recovery" ng-cloak)
             div(ng-message="email.$error")
                 div(ng-message="required") E-mail must be typed correctly
         div
-            md-button(class="md-raised md-primary") RECOVER PASSWORD
+            md-button(id="btn_recovery" class="md-raised md-primary") RECOVER PASSWORD
