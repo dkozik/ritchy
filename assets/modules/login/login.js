@@ -3,8 +3,8 @@
  */
 (function() {
 
-    RitchyApp.controller('login', ['$scope', '$element', 'RitchyApi', 'RitchyDialog', '$location', '$rootScope',
-        function($scope, $element, RitchyApi, RitchyDialog, $location, $rootScope) {
+    RitchyApp.controller('login', ['$scope', '$element', '$location', '$rootScope', 'RitchyApi', 'RitchyDialog', 'RitchyAuth',
+        function($scope, $element, $location, $rootScope, RitchyApi, RitchyDialog, RitchyAuth) {
 
         // Login panel animation
         var tl = new TimelineMax();
@@ -23,6 +23,7 @@
                 RitchyApi.request('login', null, {login: this.login, password: this.password},
                 function onSuccess(response) {
                     if (response.data.code==1) {
+                        RitchyAuth.updateToken(response.data.token);
                         // TODO: Redirect to first requested page before redirected to /login
                         $location.path('/core');
                     } else if (response.data.error>'') {

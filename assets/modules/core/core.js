@@ -34,9 +34,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
     .config(['$httpProvider', function($httpProvider){
         $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
         $httpProvider.defaults.withCredentials = true;
-        $httpProvider.defaults.transformRequest = function( data ) {
+    }])
+    .run(['$rootScope', '$injector', function($rootScope, $injector) {
+        $injector.get('$http').defaults.transformRequest = function( data ) {
+            // Трансформация тела POST запроса в понятный PHP вид
             return angular.isObject(data) && String(data) !== '[Object File]' ? angular.toParam(data) : data;
-        }
+        };
     }]);
 
 (function() {
@@ -65,15 +68,27 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
     /**
      * Сервис реализующий логику работы с серверным API
      */
-    RitchyApp.factory('RitchyApi', ['$http', function($http) {
+    RitchyApp.factory('RitchyApi', ['$http', '$rootScope', function($http, $rootScope) {
 
         var apiUrl = 'http://localhost/ritchy/api';
 
         return {
             request: function( controller, action, params, onSuccess, onError ) {
                 var url = apiUrl+'/'+controller;
+                var token = $rootScope.auth.getUserToken();
+                var config = {};
+                if (token>'') {
+                    // Отправка токена с каждым запросом
+                    config.headers = {'Authorization': 'Bearer '+token};
+                }
                 if (action>'') url+='/'+action;
-                $http.post(url, params).then(onSuccess, onError);
+                $http.post(url, params, config).then(function onSuccessPre( response ) {
+                    // Вывод дополнительной информации в консоль в случае её наличия
+                    if (response.data.debug>'') {
+                        console.log(response.data.debug);
+                    }
+                    onSuccess && onSuccess( response );
+                }, onError);
             }
         }
     }]);
@@ -156,11 +171,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
     /**
      * Контроллер реализующий логику основной страницы ядра
      */
-    RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', function($scope, $http, RitchyAuth) {
+    RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', '$rootScope', function($scope, $http, RitchyAuth, $rootScope) {
         function sendStat() {
             var img = new Image();
             img.src = "./api/1x1.png?";
         }
+        $rootScope.auth = RitchyAuth;
 //        console.log('RitchyAuth.isUserAuth: ', RitchyAuth.isUserAuth());
     }]);
 
