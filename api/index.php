@@ -22,7 +22,7 @@ function sessionExpired() {
  }
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: http://localhost:8080');
+header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
 
 $qstring = $_SERVER['QUERY_STRING'];
 session_start();

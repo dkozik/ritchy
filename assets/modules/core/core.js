@@ -84,7 +84,8 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
     RitchyApp.factory('RitchyAuth', ['$http', 'RitchyDialog', 'RitchyApi', function( $http, RitchyDialog, RitchyApi ) {
         // Service internal params
         var isUserAuth = false,
-            firstStatLoaded = false;
+            firstStatLoaded = false,
+            userToken = null;
 
 
         // Constructor method implementation
@@ -103,7 +104,15 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
                 callback && callback(isUserAuth);
             }, function onError( response ) {
                 firstStatLoaded = true;
-                RitchyDialog.showAlert('API error', 'Unknown api error: '+response, callback);
+                if (angular.isObject(response)) {
+                    if (response.status<0) {
+                        RitchyDialog.showAlert('API error', 'Unknown api error: ' + response.status+'<br>Error details in console.', callback);
+                    } else {
+                        RitchyDialog.showAlert('API error', 'Unknown api error: ' + response.statusText, callback);
+                    }
+                } else {
+                    RitchyDialog.showAlert('API error', 'Unknown api error: '+response, callback);
+                }
             });
         }
 
@@ -133,6 +142,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
             // Получение статуса авторизации пользователя в системе
             isUserAuth: function( callback ) {
                 requestLoginStat(callback, true);
+            },
+            updateToken: function( token ) {
+                userToken = token;
+            },
+            getUserToken: function() {
+                return userToken;
             }
         }
     }]);
