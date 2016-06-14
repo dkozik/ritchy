@@ -20,9 +20,9 @@ div(class="mui-container login-holder" ng-controller="login" ng-cloak)
                     input(required type="password" name="password" ng-model="user.password" ng-change="user.changed()")
                     div(ng-message="password.$error")
                         div(ng-message="required") Password required
-                p(class="mui--text-right")
-                    a(ng-href="javascript: return false;" ng-click="user.doRecovery()") Forgot password?
-                div
-                    md-button(class="md-raised md-primary" ng-disabled="!user.canLogin" ng-click="user.doLogin()") SIGN IN
-                div
-                    md-button(class="md-primary") BECOME OUR CUSTOMER
+        p(class="mui--text-right")
+            span(id="ref_recovery" ng-click="user.doRecovery()") Forgot password?
+        div
+            md-button(id="btn_sign_in" class="md-raised md-primary" ng-disabled="!user.canLogin" ng-click="user.doLogin()") SIGN IN
+        div
+            md-button(id="btn_register" class="md-primary") BECOME OUR CUSTOMER
