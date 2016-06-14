@@ -3,6 +3,7 @@
  */
 var lr = require('tiny-lr'), // Минивебсервер для livereload
     gulp = require('gulp'), // Сообственно Gulp JS
+    util = require('gulp-util'),
     jade = require('gulp-jade'), // Плагин для Jade
     stylus = require('gulp-stylus'), // Плагин для Stylus
     livereload = require('gulp-livereload'), // Livereload для Gulp
@@ -16,15 +17,52 @@ var lr = require('tiny-lr'), // Минивебсервер для livereload
     serveStatic = require('serve-static'),
     path = require('path'),
     fs = require('fs'),
+    ini = require('ini'),
     server = lr();
 
-var port = '8080';
-var modulesBase = './assets/modules';
-var publishFolder = './public';
-var modulesQueue = ['core'];
+// Настройки проекта по умолчанию
+var props = {
+    webServer: {
+        // Порт локального Web сервера
+        port: '8080'
+    },
+    RitchyModules: {
+        // Относительный путь к каталогу модулей
+        base: './assets/modules',
+        // Преднастроенная очередь модулей (расширяющий параметр - все не перечисленные модули
+        // будут автоматически добавлены в естественной последовательности вслед за перечисленными)
+        queue: ['core']
+    },
+    RitchyPublish: {
+        // Относительный путь сборки готового проекта
+        folder: './public'
+    }
+};
 
 // Modules cache
 var modulesFolders = [];
+
+
+// Загрузка локальных настроек из ini файла ./custom_properties
+(function( localConfigFile ) {
+    try {
+        if (fs.lstatSync(localConfigFile)) {
+            util.log('Read custom properties from ini file: ', '\x1b[36m'+localConfigFile+'\x1b[0m');
+            var config = ini.parse(fs.readFileSync(localConfigFile, 'utf-8'));
+            for (var section in config) {
+                util.log('Read section [\x1b[36m'+section+'\x1b[0m]');
+                var sect = config[section];
+                var psect = props[section];
+                if (!psect) continue;
+                for (var key in config[section]) {
+                    props[section][key] = sect[key];
+                }
+            }
+        }
+    } catch(e) {
+        console.error(e);
+    }
+})('./custom_properties');
 
 function getFolders(dir) {
     if (modulesFolders.length>0) {
@@ -36,20 +74,20 @@ function getFolders(dir) {
             return fs.statSync(path.join(dir, file)).isDirectory();
         });
     // Выстраиваем порядок следования модулей в соответствии с жёстко указанным
-    // в переменной modulesQueue. В том случае когда modulesQueue пустой массив
+    // в переменной props.RitchyModules.queue. В том случае когда props.RitchyModules.queue пустой массив
     // (что по определению не правильно) функция вернёт массив найденых каталогов
-    modulesQueue.map(function( module ) {
+    props.RitchyModules.queue.map(function( module ) {
         var offset = folders.indexOf(module);
         if (offset>=0) folders.splice(offset, 1);
     });
-    modulesFolders = modulesQueue.concat(folders);
+    modulesFolders = props.RitchyModules.queue.concat(folders);
     return modulesFolders.slice();
 }
 
 // Собираем Stylus (динамические css)
 gulp.task('stylus', function() {
-    var modulesSTYL = getFolders(modulesBase).map(function( module ) {
-        return './'+path.join(modulesBase, module)+path.sep+'*.styl';
+    var modulesSTYL = getFolders(props.RitchyModules.base).map(function( module ) {
+        return './'+path.join(props.RitchyModules.base, module)+path.sep+'*.styl';
     });
     gulp.src(['./assets/stylus/index.styl'].concat(modulesSTYL))
         .pipe(concat('index.styl'))
@@ -64,8 +102,8 @@ gulp.task('stylus', function() {
 
 // Сборка CSS
 gulp.task('css', function() {
-    var modulesCSS = getFolders(modulesBase).map(function( module ) {
-        return './'+path.join(modulesBase, module)+path.sep+'*.css';
+    var modulesCSS = getFolders(props.RitchyModules.base).map(function( module ) {
+        return './'+path.join(props.RitchyModules.base, module)+path.sep+'*.css';
     });
     gulp.src(['./assets/css/*.css'].concat(modulesCSS))
         .pipe(concat('ritchy.css'))
@@ -100,7 +138,7 @@ var nonStandardModules = {
                     pretty: true
                 }))
                 .on('error', console.error)
-                .pipe(gulp.dest(publishFolder))
+                .pipe(gulp.dest(props.RitchyPublish.folder))
                 .pipe(rename('index.html'))
                 .pipe(livereload(server));
 
@@ -128,21 +166,21 @@ var nonStandardModules = {
 };
 
 gulp.task('js', function() {
-    var modulesJS = getFolders(modulesBase).map(function( module ) {
-        return './'+path.join(modulesBase, module)+path.sep+'*.js';
+    var modulesJS = getFolders(props.RitchyModules.base).map(function( module ) {
+        return './'+path.join(props.RitchyModules.base, module)+path.sep+'*.js';
     });
 
     gulp.src(modulesJS)
         .pipe(concat('ritchy.js'))
-        .pipe(gulp.dest(path.join(publishFolder, 'js')))
+        .pipe(gulp.dest(path.join(props.RitchyPublish.folder, 'js')))
         .pipe(livereload(server));
 
 });
 
 gulp.task('modules', function() {
-    getFolders(modulesBase).map(function( folder ) {
-        var moduleBase = './'+path.join(modulesBase, folder);
-        var publishBase = './'+path.join(publishFolder, 'modules', folder);
+    getFolders(props.RitchyModules.base).map(function( folder ) {
+        var moduleBase = './'+path.join(props.RitchyModules.base, folder);
+        var publishBase = './'+path.join(props.RitchyPublish.folder, 'modules', folder);
         var nonStandardModule = nonStandardModules[folder];
 
         // Автосборка шаблонов
@@ -174,9 +212,9 @@ gulp.task('http-server', function() {
     connect()
         .use(require('connect-livereload')())
         .use(serveStatic('./public'))
-        .listen(port);
+        .listen(props.webServer.port);
 
-    console.log('Server listening on http://localhost:'+port);
+    console.log('Server listening on http://localhost:'+props.webServer.port);
 });
 
 
@@ -202,14 +240,14 @@ gulp.task('watch', function() {
         });
 
         // Обход всех JS в модулях
-        gulp.watch(getFolders(modulesBase).map(function( module ) {
-            return './'+path.join(modulesBase, module)+path.sep+'*.js';
+        gulp.watch(getFolders(props.RitchyModules.base).map(function( module ) {
+            return './'+path.join(props.RitchyModules.base, module)+path.sep+'*.js';
         }), ['js']);
 
         // Обход модулей на предмет изменения view и кастомных JS
-        getFolders(modulesBase).map(function( folder ) {
-            var moduleBase = './'+path.join(modulesBase, folder);
-            var publishBase = './'+path.join(publishFolder, 'modules', folder);
+        getFolders(props.RitchyModules.base).map(function( folder ) {
+            var moduleBase = './'+path.join(props.RitchyModules.base, folder);
+            var publishBase = './'+path.join(props.RitchyPublish.folder, 'modules', folder);
             var nonStandardModule = nonStandardModules[folder];
 
             gulp.watch(path.join(moduleBase, 'views')+path.sep+'**'+path.sep+'*.jade', function() {
