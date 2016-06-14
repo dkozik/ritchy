@@ -190,8 +190,21 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
             var _checkRoute = function($route, $http, onSuccess, onError) {
                 var module = $route.current.params.module || 'core';
                 var view = $route.current.params.view || 'index';
+                var url = modulesBase+'/'+module+'/views/'+view+'.html';
 
-                $http.get(modulesBase+'/'+module+'/views/'+view+'.html').then(onSuccess, onError);
+                // Проверка доступности шаблона коротким запросом
+                var http = new XMLHttpRequest();
+                http.open('HEAD', url, true);
+                http.onreadystatechange = function() {
+                    if (http.readyState==4) {
+                        if (http.status==200) {
+                            onSuccess && onSuccess();
+                        } else {
+                            onError && onError();
+                        }
+                    }
+                };
+                http.send('');
             };
 
             // Простая проверка доступности маршрута
