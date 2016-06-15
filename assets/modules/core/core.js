@@ -65,6 +65,26 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
         }
     }]);
 
+    RitchyApp.factory('RitchyAnim', [function() {
+        return {
+            easeIn: function( target ) {
+                var tl = new TimelineMax();
+                TweenLite.set(target, {scale: 0.5, autoAlpha:0});
+                tl.to(target, 0.3, {autoAlpha: 1});
+                tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+            },
+            easeOut: function( target, callback ) {
+                var tl = new TimelineMax();
+                TweenLite.set(target, {scale: 1, rotation: 0.1, autoAlpha: 1});
+                tl.to(target, 0.2, {autoAlpha: 0});
+                tl.to(target, 0.2, {scale: 0.5, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+                if (callback) {
+                    tl.call(callback);
+                }
+            }
+        }
+    }]);
+
     /**
      * Сервис реализующий логику работы с серверным API
      */
@@ -259,6 +279,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
                 })
                 .when('/recovery', {
                     templateUrl: modulesBase+'/recovery/views/index.html',
+                    resolve: {
+                        check: checkRoute
+                    }
+                })
+                .when('/register', {
+                    templateUrl: modulesBase+'/register/views/index.html',
                     resolve: {
                         check: checkRoute
                     }

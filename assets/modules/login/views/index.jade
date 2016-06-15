@@ -1,5 +1,11 @@
 //
    Created by admin on 11.06.2016.
+mixin requiredInput(label, name, model, requiredHint, ngChange, type)
+    md-input-container(class="md-block" flex-gt-sm)
+        label=label
+        input(required type=type name=name ng-model=model ng-change=ngChange)
+        div(ng-message=name+".$error")
+            div(ng-message="required")=requiredHint
 
 div(class="mui-container login-holder" ng-controller="login" ng-cloak)
     span(class="login-pane-space")
@@ -11,19 +17,11 @@ div(class="mui-container login-holder" ng-controller="login" ng-cloak)
             h2(class="md-display-1") Sign in
         md-content(md-theme="default" layout-gt-sm="row" layout-padding)
             div
-                md-input-container(class="md-block" flex-gt-sm)
-                    label Login
-                    input(required name="login" ng-model="user.login" ng-change="user.changed()")
-                    div(ng-message="login.$error")
-                        div(ng-message="required") Login required
-                md-input-container(class="md-block" flex-gt-sm)
-                    label Password
-                    input(required type="password" name="password" ng-model="user.password" ng-change="user.changed()")
-                    div(ng-message="password.$error")
-                        div(ng-message="required") Password required
+                +requiredInput("Login", "login", "user.login", "Login required", "user.changed()")
+                +requiredInput("Password", "password", "user.password", "Password required", "user.changed()", "password")
         p(class="mui--text-right")
             span(id="ref_recovery" ng-click="user.doRecovery()") Forgot password?
         div
             md-button(id="btn_sign_in" class="md-raised md-primary" ng-disabled="!user.canLogin" ng-click="user.doLogin()") SIGN IN
         div
-            md-button(id="btn_register" class="md-primary") BECOME OUR CUSTOMER
+            md-button(id="btn_register" class="md-primary" ng-click="user.doRegister()") BECOME OUR CUSTOMER
