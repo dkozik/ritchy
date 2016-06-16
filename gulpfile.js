@@ -250,7 +250,8 @@ gulp.task('watch', function() {
             var publishBase = './'+path.join(props.RitchyPublish.folder, 'modules', folder);
             var nonStandardModule = nonStandardModules[folder];
 
-            gulp.watch(path.join(moduleBase, 'views')+path.sep+'**'+path.sep+'*.jade', function() {
+            gulp.watch([path.join(moduleBase, 'views')+path.sep+'**'+path.sep+'*.jade',
+                        moduleBase+path.sep+'**'+path.sep+'*.jade'], function() {
                 if (nonStandardModule && nonStandardModule.jade) {
                     nonStandardModule.jade(moduleBase, publishBase, folder);
                 } else {

@@ -10,6 +10,7 @@ html(lang="ru" ng-app="Ritchy")
         script(src="./modules/core/js/angular.min.js")
         link(rel="stylesheet" href="./css/ritchy.css")
         link(rel="stylesheet" href="./css/index.css")
-    body(ng-controller="core" ng-cloak)
-        ng-view
-        script(src="./js/ritchy.js")
+    body(ng-strict-di)
+        div(ng-controller="core" ng-cloak)
+            ng-view
+            script(src="./js/ritchy.js")
