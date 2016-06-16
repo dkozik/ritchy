@@ -62,6 +62,26 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                         .textContent(text)
                         .ok('OK')
                 ).finally(callback);
+            },
+            showTemplateDialog: function( templateUrl, fullScreen ) {
+                var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) || fullScreen;
+                $mdDialog.show({
+                    templateUrl: templateUrl,
+                    parent: angular.element(document.body),
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen,
+                    controller: ['$scope', function($scope) {
+                        $scope.hide = function() {
+                            $mdDialog.hide();
+                        };
+                        $scope.cancel = function() {
+                            $mdDialog.cancel();
+                        };
+                        $scope.close = function() {
+                            $mdDialog.hide();
+                        };
+                    }]
+                });
             }
         }
     }]);

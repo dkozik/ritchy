@@ -34,6 +34,23 @@
                 },
                 doRegister: function() {
 
+                },
+                doSignIn: function(ev) {
+                    RitchyAnim.easeOut(target, function() {
+                        $rootScope.$apply(function() {
+                            $location.path('/login');
+                        });
+                    });
+                    return false;
+                },
+                showTerms: function(ev) {
+                    RitchyDialog.showTemplateDialog('/modules/register/views/terms.html', true);
+                },
+                showPrivacy: function(ev) {
+                    RitchyDialog.showTemplateDialog('/modules/register/views/privacy.html', true);
+                },
+                showMoreInfo: function(ev) {
+                    RitchyDialog.showTemplateDialog('/modules/register/views/delivery.html', true);
                 }
             };
         }]);

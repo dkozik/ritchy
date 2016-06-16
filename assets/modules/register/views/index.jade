@@ -39,15 +39,15 @@ div(class="mui-container register-holder" ng-controller="register" ng-cloak)
                 md-button(id="btn_create_account" class="md-raised md-primary" ng-disabled="!user.canRegister" ng-click="user.doRegister()") CREATE ACCOUNT
             div
                 md-checkbox(class="md-primary md-body-1" md-no-ink ng-model="user.delivery" aria-label="Keep informed with news") Stay informed about Ritchy products.&nbsp;
-                    span(class="ritchy-reference") Learn more
+                    span(class="ritchy-reference" ng-click="user.showMoreInfo($event); $event.stopPropagation();") Learn more
             div
                 md-checkbox(class="md-primary md-body-1" md-no-ink ng-model="user.termsAgree" aria-label="Terms of use agreement") I have read and agree to the&nbsp;
-                    span(class="ritchy-reference") Terms of Use
+                    span(class="ritchy-reference" ng-click="user.showTerms($event); $event.stopPropagation();") Terms of Use
                     font &nbsp;and&nbsp;
-                    span(class="ritchy-reference") Privacy Policy
+                    span(class="ritchy-reference" ng-click="user.showPrivacy($event); $event.stopPropagation();") Privacy Policy
             p
             p(class="mui--text-right register-footer") Already registered?<br>
-                span(class="ritchy-reference") Sign in!
+                span(class="ritchy-reference" ng-click="user.doSignIn($event); $event.stopPropagation();") Sign in!
 
         div(class="mui-panel info-block")
             p Get registered as RITCHY wholesale customer to get access to:

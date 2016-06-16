@@ -199,10 +199,11 @@ gulp.task('modules', function() {
 
 // Копируем и минимизируем изображения
 gulp.task('images', function() {
+    gulp.src('./assets/img/icons/**/*')
+        .pipe(gulp.dest('./public/img/icons'));
     gulp.src('./assets/img/**/*')
         .pipe(imagemin())
         .pipe(gulp.dest('./public/img'))
-
 });
 
 

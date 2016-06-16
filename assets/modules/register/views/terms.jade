@@ -1,0 +1,16 @@
+//
+   Created by kozik on 16.06.2016.
+
+md-dialog(aria-label="Terms of use" ng-cloak)
+    form
+        md-toolbar
+            div(class="md-toolbar-tools")
+                h2 Terms of use
+                span(flex)
+                md-button(class="md-icon-button" ng-click="cancel()")
+                    md-icon(md-svg-src="./img/icons/ic_close_24px.svg" aria-label="Close dialog")
+        md-dialog-content
+            div(class="md-dialog-content") Terms of use text template there
+        md-dialog-actions(layout="row")
+            span(flex)
+            md-button(ng-click="close()") Ok
