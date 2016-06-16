@@ -33,7 +33,8 @@
 var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
     .config(['$httpProvider', function($httpProvider){
         $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-        $httpProvider.defaults.withCredentials = true;
+        // Временная отмена OAuth 2.0
+        // $httpProvider.defaults.withCredentials = true;
     }])
     .run(['$rootScope', '$injector', function($rootScope, $injector) {
         $injector.get('$http').defaults.transformRequest = function( data ) {
@@ -90,19 +91,23 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
      */
     RitchyApp.factory('RitchyApi', ['$http', '$rootScope', function($http, $rootScope) {
 
-        var apiUrl = 'http://localhost/ritchy/api';
+        var apiUrl = 'http://private-2251e-ritchy2.apiary-mock.com';
 
         return {
             request: function( controller, action, params, onSuccess, onError ) {
                 var url = apiUrl+'/'+controller;
                 var token = $rootScope.auth.getUserToken();
                 var config = {};
+                var native_params = {};
                 if (token>'') {
                     // Отправка токена с каждым запросом
-                    config.headers = {'Authorization': 'Bearer '+token};
+                    // Поддержка OAuth 2.0 временно отменяется
+                    // config.headers = {'Authorization': 'Bearer '+token};
+                    // Token переходит в параметры каждого запроса
+                    native_params.token = token;
                 }
                 if (action>'') url+='/'+action;
-                $http.post(url, params, config).then(function onSuccessPre( response ) {
+                $http.post(url, angular.extend({}, params, native_params), config).then(function onSuccessPre( response ) {
                     // Вывод дополнительной информации в консоль в случае её наличия
                     if (response.data.debug>'') {
                         console.log(response.data.debug);

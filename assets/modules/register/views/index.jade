@@ -2,25 +2,37 @@
    Created by kozik on 15.06.2016.
 mixin requiredInput(label, name, model, requiredHint, ngChange, type)
     md-input-container(class="md-block" flex-xs)
-        input(ng-required="true" type=type name=name ng-model=model ng-change=ngChange placeholder=label)
+        label=label
+        input(required type=type name=name ng-model=model ng-change=ngChange)
+        div(ng-messages=name + ".$error")
+            div(ng-message="required")=requiredHint
+
+mixin requiredEmail(label, name, model, requiredHint, ngChange)
+    md-input-container(class="md-block" flex-xs)
+        label=label
+        input(required type=type name=name ng-model=model ng-change=ngChange ng-pattern="/^.+@.+\..+$/" ng-minlength=10 ng-maxlength=100)
+        div(ng-messages=name+".$error")
+            div(ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']")=requiredHint
 
 div(class="mui-container register-holder" ng-controller="register" ng-cloak)
     span(class="register-pane-space")
     div(class="mui-panel register-pane")
         div
             img(src="./img/logo.png")
-        p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd.<br> B2B online portal.
+        p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd. B2B online portal.
         div
             h2(class="md-display-1") Registration
         md-content(md-theme="default" layout-gt-sm="row" layout-padding)
             div
-                +requiredInput("Name", "name", "user.name", "", "user.changed()")
-                +requiredInput("Company name", "company", "user.company", "", "user.changed()")
+                +requiredInput("Name", "name", "user.name", "User name cannot be empty", "user.changed()")
+                +requiredInput("Company name", "company", "user.company", "User company cannot be empty", "user.changed()")
                 md-input-container(class="md-block" flex-xs)
                     label Country
-                    md-select(ng-init="isRequired = true;" ng-required="isRequired" required ng-model="user.country")
+                    md-select(name="country" ng-init="isRequired = true;" ng-required="isRequired" required ng-model="user.country")
                         md-option(ng-repeat="country in countryList.list" value="{{country.code}}") {{country.name}}
-                +requiredInput("Email", "email", "user.email", "", "user.changed()")
+                    div(ng-messages="country.$error" class="md-errors-spacer")
+                        div(ng-message="required") Country must be selected from list
+                +requiredEmail("Email", "email", "user.email", "Your email must be between 10 and 100 characters long and look like an e-mail address.", "user.changed()")
                 +requiredInput("Password", "password", "user.password", "", "user.changed()", "password")
         div
             md-button(id="btn_create_account" class="md-raised md-primary" ng-disabled="!user.canRegister" ng-click="user.doRegister") CREATE ACCOUNT

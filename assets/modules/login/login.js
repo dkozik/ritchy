@@ -32,7 +32,15 @@
                         RitchyDialog.showAlert('Login error', response.data.error);
                     }
                 }, function onError(response) {
-                        RitchyDialog.showAlert('Login error', 'Unknown api error: '+response);
+                        if (angular.isObject(response)) {
+                            if (response.status<0) {
+                                RitchyDialog.showAlert('Login error', 'Unknown api error, response status ' + response.status+', details in console log.');
+                            } else {
+                                RitchyDialog.showAlert('Login error', 'Unknown api error, response status '+ response.status+', response text: '+response.responseText);
+                            }
+                        } else {
+                            RitchyDialog.showAlert('Login error', 'Unknown api error: '+response);
+                        }
                 });
             },
             doRecovery: function() {
