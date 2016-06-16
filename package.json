@@ -36,11 +36,5 @@
     "ritchy",
     "angular",
     "gson"
-  ],
-  "author": "Denis Kozik",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dkozik/ritchy/issues"
-  },
-  "homepage": "https://github.com/dkozik/ritchy#readme"
+  ]
 }
