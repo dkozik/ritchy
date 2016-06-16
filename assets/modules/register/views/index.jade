@@ -1,38 +1,60 @@
 //
    Created by kozik on 15.06.2016.
 mixin requiredInput(label, name, model, requiredHint, ngChange, type)
-    md-input-container(class="md-block" flex-xs)
+    md-input-container(class="md-block")
         label=label
         input(required type=type name=name ng-model=model ng-change=ngChange)
-        div(ng-messages=name + ".$error")
+        div(ng-messages="registration."+name + ".$error")
             div(ng-message="required")=requiredHint
 
 mixin requiredEmail(label, name, model, requiredHint, ngChange)
-    md-input-container(class="md-block" flex-xs)
+    md-input-container(class="md-block")
         label=label
         input(required type=type name=name ng-model=model ng-change=ngChange ng-pattern="/^.+@.+\..+$/" ng-minlength=10 ng-maxlength=100)
-        div(ng-messages=name+".$error")
+        div(ng-messages="registration."+name+".$error")
             div(ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']")=requiredHint
 
 div(class="mui-container register-holder" ng-controller="register" ng-cloak)
     span(class="register-pane-space")
     div(class="mui-panel register-pane")
-        div
-            img(src="./img/logo.png")
-        p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd. B2B online portal.
-        div
-            h2(class="md-display-1") Registration
-        md-content(md-theme="default" layout-gt-sm="row" layout-padding)
+        form(name="registration")
             div
-                +requiredInput("Name", "name", "user.name", "User name cannot be empty", "user.changed()")
-                +requiredInput("Company name", "company", "user.company", "User company cannot be empty", "user.changed()")
-                md-input-container(class="md-block" flex-xs)
-                    label Country
-                    md-select(name="country" ng-init="isRequired = true;" ng-required="isRequired" required ng-model="user.country")
-                        md-option(ng-repeat="country in countryList.list" value="{{country.code}}") {{country.name}}
-                    div(ng-messages="country.$error" class="md-errors-spacer")
-                        div(ng-message="required") Country must be selected from list
-                +requiredEmail("Email", "email", "user.email", "Your email must be between 10 and 100 characters long and look like an e-mail address.", "user.changed()")
-                +requiredInput("Password", "password", "user.password", "", "user.changed()", "password")
-        div
-            md-button(id="btn_create_account" class="md-raised md-primary" ng-disabled="!user.canRegister" ng-click="user.doRegister") CREATE ACCOUNT
+                img(src="./img/logo.png")
+            p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd. B2B online portal.
+            div
+                h2(class="md-display-1") Registration
+            md-content(md-theme="default" layout-gt-sm="row" layout-padding)
+                div
+                    +requiredInput("Name", "name", "user.name", "User name cannot be empty", "user.changed()")
+                    +requiredInput("Company name", "company", "user.company", "User company cannot be empty", "user.changed()")
+                    md-input-container(class="md-block" flex-xs)
+                        label Country
+                        md-select(name="country" required ng-model="user.country")
+                            md-option(ng-repeat="country in countryList.list" value="{{country.code}}") {{country.name}}
+                        div(ng-messages="country.$error" class="md-errors-spacer")
+                            div(ng-message="required") Country must be selected from list
+                    +requiredEmail("Email", "email", "user.email", "Your email must be between 10 and 100 characters long and look like an e-mail address.", "user.changed()")
+                    +requiredInput("Password", "password", "user.password", "", "user.changed()", "password")
+            div
+                md-button(id="btn_create_account" class="md-raised md-primary" ng-disabled="!user.canRegister" ng-click="user.doRegister()") CREATE ACCOUNT
+            div
+                md-checkbox(class="md-primary md-body-1" md-no-ink ng-model="user.delivery" aria-label="Keep informed with news") Stay informed about Ritchy products.&nbsp;
+                    span(class="ritchy-reference") Learn more
+            div
+                md-checkbox(class="md-rimary md-body-1" md-no-ink ng-model="user.termsAgree" aria-label="Terms of use agreement") I have read and agree to the&nbsp;
+                    span(class="ritchy-reference") Terms of Use
+                    font &nbsp;and&nbsp;
+                    span(class="ritchy-reference") Privacy Policy
+            p
+            p(class="mui--text-right register-footer") Already registered?<br>
+                span(class="ritchy-reference") Sign in!
+
+        div(class="mui-panel info-block")
+            p Get registered as RITCHY wholesale customer to get access to:
+            ul
+                li real-time stock availability
+                li online quotations
+                li real-time order tracking
+                li current promotions and promo-products
+                li marketing materials and support
+            p Buy online from RITCHY, place orders 7 days a week and 24 hours a day and save your time and money!

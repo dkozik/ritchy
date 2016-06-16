@@ -20,17 +20,17 @@
                 ]
             };
 
-
-console.log($scope.countryList.list);
             $scope.user = {
                 name: '',
                 company: '',
                 country: '',
                 email: '',
                 password: '',
+                delivery: false,
+                termsAgree: false,
                 canRegister: false,
                 changed: function() {
-                    this.canRegister = this.name>'' && this.company>'' && this.email>'' && this.password>'';
+                    this.canRegister = this.name>'' && this.company>'' && this.email>'' && this.password>'' && this.delivery && this.termsAgree;
                 },
                 doRegister: function() {
 

@@ -1,19 +1,22 @@
 //
    Created by admin on 13.06.2016.
+mixin requiredEmail(label, name, model, requiredHint, ngChange)
+    md-input-container(class="md-block")
+        label=label
+        input(required type=type name=name ng-model=model ng-change=ngChange ng-pattern="/^.+@.+\..+$/" ng-minlength=10 ng-maxlength=100)
+        div(ng-messages="recovery."+name+".$error")
+            div(ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']")=requiredHint
 
 div(class="mui-container recovery-holder" ng-controller="recovery" ng-cloak)
     span(class="recovery-pane-space")
     div(class="mui-panel recovery-pane")
-        div
-            img(src="./img/logo.png")
-        p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd. B2B online portal.
-        div
-            h1(class="md-headline") Password recovery
-        div(class="mui--text-body1 mui--text-dark-secondary") Please enter your registered email to which we will send the new password:
-        md-input-container(class="md-block" flex-gt-sm)
-            label E-mail
-            input(required name="email" ng-model="user.email" ng-change="user.changed()")
-            div(ng-messages="email.$error")
-                div(ng-message="required") E-mail must be typed correctly
-        div
-            md-button(id="btn_recovery" class="md-raised md-primary") RECOVER PASSWORD
+        form(name="recovery")
+            div
+                img(src="./img/logo.png")
+            p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd. B2B online portal.
+            div
+                h1(class="md-headline") Password recovery
+            div(class="mui--text-body1 mui--text-dark-secondary") Please enter your registered email to which we will send the new password:
+            +requiredEmail("E-mail", "email", "user.email", "E-mail must be typed correctly", "user.changed()")
+            div
+                md-button(id="btn_recovery" class="md-raised md-primary") RECOVER PASSWORD

@@ -30,7 +30,7 @@
     }
 })();
 
-var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial'])
+var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages'])
     .config(['$httpProvider', function($httpProvider){
         $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
         // Временная отмена OAuth 2.0

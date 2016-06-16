@@ -147,7 +147,6 @@ var nonStandardModules = {
         js: function(moduleBase, publishBase, folder) {
             // Сборка Angular библиотек в нужной последовательности
             gulp.src([
-                path.join(moduleBase, 'js/angular.min.js'),
                 path.join(moduleBase, 'js/angular/angular.min.js'),
                 path.join(moduleBase, 'js/auth.js'), // auth скрывается в недрах Angular'а
                 path.join(moduleBase, 'js/angular/angular-route.min.js'),

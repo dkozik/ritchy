@@ -4,24 +4,25 @@ mixin requiredInput(label, name, model, requiredHint, ngChange, type)
     md-input-container(class="md-block")
         label=label
         input(required type=type name=name ng-model=model ng-change=ngChange)
-        div(ng-messages=name+".$error")
+        div(ng-messages="login."+name+".$error")
             div(ng-message="required")=requiredHint
 
 div(class="mui-container login-holder" ng-controller="login" ng-cloak)
     span(class="login-pane-space")
     div(class="mui-panel login-pane")
-        div
-            img(src="./img/logo.png")
-        p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd.<br> B2B online portal.
-        div
-            h2(class="md-display-1") Sign in
-        md-content(md-theme="default" layout-gt-sm="row" layout-padding)
+        form(name="login")
             div
-                +requiredInput("Login", "login", "user.login", "Login required", "user.changed()")
-                +requiredInput("Password", "password", "user.password", "Password required", "user.changed()", "password")
-        p(class="mui--text-right")
-            span(id="ref_recovery" ng-click="user.doRecovery()") Forgot password?
-        div
-            md-button(id="btn_sign_in" class="md-raised md-primary" ng-disabled="!user.canLogin" ng-click="user.doLogin()") SIGN IN
-        div
-            md-button(id="btn_register" class="md-raised md-primary" ng-click="user.doRegister()") BECOME OUR CUSTOMER
+                img(src="./img/logo.png")
+            p(class="mui--text-body1 mui--text-dark-secondary") Welcome to RITCHY Group Ltd.<br> B2B online portal.
+            div
+                h2(class="md-display-1") Sign in
+            md-content(md-theme="default" layout-gt-sm="row" layout-padding)
+                div
+                    +requiredInput("Login", "login", "user.login", "Login required", "user.changed()")
+                    +requiredInput("Password", "password", "user.password", "Password required", "user.changed()", "password")
+            p(class="mui--text-right")
+                span(class="ritchy-reference" ng-click="user.doRecovery()") Forgot password?
+            div
+                md-button(id="btn_sign_in" class="md-raised md-primary" ng-disabled="!user.canLogin" ng-click="user.doLogin()") SIGN IN
+            div
+                md-button(id="btn_register" class="md-raised md-primary" ng-click="user.doRegister()") BECOME OUR CUSTOMER
