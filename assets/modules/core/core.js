@@ -68,6 +68,10 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 $mdDialog.show({
                     templateUrl: templateUrl,
                     parent: angular.element(document.body),
+                    onShowing : function() {
+                        // Fix проблемы "весящего" в пол экрана body при открытом диалоге
+                        document.body.style.top = "0";
+                    },
                     clickOutsideToClose: true,
                     fullscreen: useFullScreen,
                     controller: ['$scope', function($scope) {
