@@ -48,24 +48,49 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
     var modulesBase = './modules';
 
     /**
+     * Сервис стандартной анимации
+     */
+    RitchyApp.factory('RitchyAnim', [function() {
+        return {
+            easeIn: function( target ) {
+                var tl = new TimelineMax();
+                TweenLite.set(target, {scale: 0.5, autoAlpha:0});
+                tl.to(target, 0.3, {autoAlpha: 1});
+                tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+            },
+            easeOut: function( target, callback ) {
+                var tl = new TimelineMax();
+                TweenLite.set(target, {scale: 1, rotation: 0.1, autoAlpha: 1});
+                tl.to(target, 0.2, {autoAlpha: 0});
+                tl.to(target, 0.2, {scale: 0.5, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+                if (callback) {
+                    tl.call(callback);
+                }
+            }
+        }
+    }]);
+
+    /**
      * Сервис реализующий логику сообщений и форм ввода/выбора значений
      */
-    RitchyApp.factory('RitchyDialog', ['$mdDialog', '$mdMedia', function($mdDialog, $mdMedia) {
+    RitchyApp.factory('RitchyDialog', ['$mdDialog', '$mdMedia', 'RitchyAnim', function($mdDialog, $mdMedia, RitchyAnim) {
         return {
             // Показ инфомрационного уведомления на экране
-            showAlert: function( title, text, callback ) {
-                $mdDialog.show(
-                    $mdDialog.alert()
-                        .parent(angular.element(document.body))
-                        .clickOutsideToClose(true)
-                        .title(title)
-                        .textContent(text)
-                        .ok('OK')
-                ).finally(callback);
+            showAlert: function( ev, title, text, callback ) {
+                var alert_com = $mdDialog.alert()
+                    .parent(angular.element(document.body))
+                    .clickOutsideToClose(true)
+                    .title(title)
+                    .textContent(text)
+                    .ok('OK');
+                if (ev!=null) {
+                    alert_com.targetEvent(ev);
+                }
+                $mdDialog.show(alert_com).finally(callback);
             },
-            showTemplateDialog: function( templateUrl, fullScreen ) {
+            showTemplateDialog: function( ev, templateUrl, fullScreen ) {
                 var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) || fullScreen;
-                $mdDialog.show({
+                var params = {
                     templateUrl: templateUrl,
                     parent: angular.element(document.body),
                     onShowing : function() {
@@ -85,27 +110,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                             $mdDialog.hide();
                         };
                     }]
-                });
-            }
-        }
-    }]);
-
-    RitchyApp.factory('RitchyAnim', [function() {
-        return {
-            easeIn: function( target ) {
-                var tl = new TimelineMax();
-                TweenLite.set(target, {scale: 0.5, autoAlpha:0});
-                tl.to(target, 0.3, {autoAlpha: 1});
-                tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
-            },
-            easeOut: function( target, callback ) {
-                var tl = new TimelineMax();
-                TweenLite.set(target, {scale: 1, rotation: 0.1, autoAlpha: 1});
-                tl.to(target, 0.2, {autoAlpha: 0});
-                tl.to(target, 0.2, {scale: 0.5, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
-                if (callback) {
-                    tl.call(callback);
+                };
+                if (ev!=null) {
+                    params.targetEvent = ev;
                 }
+console.log('params.targetEvent: ', params.targetEvent);
+                $mdDialog.show(params);
             }
         }
     }]);
@@ -160,7 +170,7 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
             }
             RitchyApi.request('login', 'stat', null, function onSuccess( response ) {
                 if (response.data.error>'') {
-                    RitchyDialog.showAlert('API error', 'Request user stats returned error: '+response.data.error);
+                    RitchyDialog.showAlert(null, 'API error', 'Request user stats returned error: '+response.data.error);
                 } else if (response.data.loggedIn) {
                     isUserAuth = response.data.loggedIn || false;
                 }
@@ -170,26 +180,26 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 firstStatLoaded = true;
                 if (angular.isObject(response)) {
                     if (response.status<0) {
-                        RitchyDialog.showAlert('API error', 'Unknown api error: ' + response.status+'<br>Error details in console.', callback);
+                        RitchyDialog.showAlert(null, 'API error', 'Unknown api error: ' + response.status+'<br>Error details in console.', callback);
                     } else {
-                        RitchyDialog.showAlert('API error', 'Unknown api error: ' + response.statusText, callback);
+                        RitchyDialog.showAlert(null, 'API error', 'Unknown api error: ' + response.statusText, callback);
                     }
                 } else {
-                    RitchyDialog.showAlert('API error', 'Unknown api error: '+response, callback);
+                    RitchyDialog.showAlert(null, 'API error', 'Unknown api error: '+response, callback);
                 }
             });
         }
 
-        function requestLogout( callback ) {
+        function requestLogout( callback, ev ) {
             RitchyApi.request('logout', null, null, function onSuccess( response ) {
                 if (response.data.error>'') {
-                    RitchyDialog.showAlert('API error', 'Error when logout: '+response.data.error, callback);
+                    RitchyDialog.showAlert(ev, 'API error', 'Error when logout: '+response.data.error, callback);
                 } else {
                     isUserAuth = false;
                     callback && callback(isUserAuth);
                 }
             }, function onError( response ) {
-                RitchyDialog.showAlert('API error', 'Unknown api error: '+response, callback);
+                RitchyDialog.showAlert(ev, 'API error', 'Unknown api error: '+response, callback);
             });
         }
 
@@ -220,11 +230,10 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
     /**
      * Контроллер реализующий логику основной страницы ядра
      */
-    RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', '$rootScope', function($scope, $http, RitchyAuth, $rootScope) {
-        function sendStat() {
-            var img = new Image();
-            img.src = "./api/1x1.png?";
-        }
+    RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', 'RitchyDialog', '$rootScope',
+        function($scope, $http, RitchyAuth, RitchyDialog, $rootScope) {
+
+            //RitchyDialog.showAlert(null, 'title', 'text');
         $rootScope.auth = RitchyAuth;
 //        console.log('RitchyAuth.isUserAuth: ', RitchyAuth.isUserAuth());
     }]);

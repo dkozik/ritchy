@@ -25,18 +25,18 @@ div(class="mui-container register-holder" ng-controller="register" ng-cloak)
                 h2(class="md-display-1") Registration
             md-content(md-theme="default" layout-gt-sm="row" layout-padding)
                 div
-                    +requiredInput("Name", "name", "user.name", "User name cannot be empty", "user.changed()")
-                    +requiredInput("Company name", "company", "user.company", "User company cannot be empty", "user.changed()")
+                    +requiredInput("Name", "name", "user.name", "User name cannot be empty", "user.changed($event)")
+                    +requiredInput("Company name", "company", "user.company", "User company cannot be empty", "user.changed($event)")
                     md-input-container(class="md-block" flex-xs)
                         label Country
-                        md-select(name="country" required ng-model="user.country")
+                        md-select(name="country" required ng-model="user.country" ng-change="user.changed($event)")
                             md-option(ng-repeat="country in countryList.list" value="{{country.code}}") {{country.name}}
                         div(ng-messages="country.$error" class="md-errors-spacer")
                             div(ng-message="required") Country must be selected from list
-                    +requiredEmail("Email", "email", "user.email", "Your email must be between 10 and 100 characters long and look like an e-mail address.", "user.changed()")
-                    +requiredInput("Password", "password", "user.password", "", "user.changed()", "password")
+                    +requiredEmail("Email", "email", "user.email", "Your email must be between 10 and 100 characters long and look like an e-mail address.", "user.changed($event)")
+                    +requiredInput("Password", "password", "user.password", "", "user.changed($event)", "password")
             div
-                md-button(id="btn_create_account" class="md-raised md-primary" ng-disabled="!user.canRegister" ng-click="user.doRegister()") CREATE ACCOUNT
+                md-button(id="btn_create_account" class="md-raised md-primary" ng-disabled="!user.canRegister" ng-click="user.doRegister($event)") CREATE ACCOUNT
             div
                 md-checkbox(class="md-primary md-body-1" md-no-ink ng-model="user.delivery" aria-label="Keep informed with news") Stay informed about Ritchy products.&nbsp;
                     span(class="ritchy-reference" ng-click="user.showMoreInfo($event); $event.stopPropagation();") Learn more

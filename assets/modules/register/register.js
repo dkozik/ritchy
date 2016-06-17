@@ -29,10 +29,10 @@
                 delivery: false,
                 termsAgree: false,
                 canRegister: false,
-                changed: function() {
+                changed: function( ev ) {
                     this.canRegister = this.name>'' && this.company>'' && this.email>'' && this.password>'' && this.delivery && this.termsAgree;
                 },
-                doRegister: function() {
+                doRegister: function( ev ) {
 
                 },
                 doSignIn: function(ev) {
@@ -44,13 +44,13 @@
                     return false;
                 },
                 showTerms: function(ev) {
-                    RitchyDialog.showTemplateDialog('/modules/register/views/terms.html', true);
+                    RitchyDialog.showTemplateDialog(ev, '/modules/register/views/terms.html', true);
                 },
                 showPrivacy: function(ev) {
-                    RitchyDialog.showTemplateDialog('/modules/register/views/privacy.html', true);
+                    RitchyDialog.showTemplateDialog(ev, '/modules/register/views/privacy.html', true);
                 },
                 showMoreInfo: function(ev) {
-                    RitchyDialog.showTemplateDialog('/modules/register/views/delivery.html', true);
+                    RitchyDialog.showTemplateDialog(ev, '/modules/register/views/delivery.html', true);
                 }
             };
         }]);

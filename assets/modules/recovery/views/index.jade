@@ -17,7 +17,7 @@ div(class="mui-container recovery-holder" ng-controller="recovery" ng-cloak)
             div
                 h1(class="md-headline") Password recovery
             div(class="mui--text-body1 mui--text-dark-secondary") Please enter your registered email to which we will send the new password:
-            +requiredEmail("E-mail", "email", "user.email", "E-mail must be typed correctly", "user.changed()")
+            +requiredEmail("E-mail", "email", "user.email", "E-mail must be typed correctly", "user.changed($event)")
             div
                 md-button(id="btn_recovery" class="md-raised md-primary" ng-disabled="!user.canRecovery" ng-click="user.doRecovery($event)") RECOVER PASSWORD
                 md-button(id="btn_cancel" class="md-raised md-primary" ng-click="user.doCancel($event)") CANCEL

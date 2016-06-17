@@ -17,7 +17,7 @@
             changed: function() {
                 this.canLogin = this.login>'' && this.password>'';
             },
-            doLogin: function() {
+            doLogin: function( ev ) {
                 RitchyApi.request('login', null, {login: this.login, password: this.password},
                 function onSuccess(response) {
                     if (response.data.code==1) {
@@ -29,17 +29,17 @@
                             });
                         });
                     } else if (response.data.error>'') {
-                        RitchyDialog.showAlert('Login error', response.data.error);
+                        RitchyDialog.showAlert(ev, 'Login error', response.data.error);
                     }
                 }, function onError(response) {
                         if (angular.isObject(response)) {
                             if (response.status<0) {
-                                RitchyDialog.showAlert('Login error', 'Unknown api error, response status ' + response.status+', details in console log.');
+                                RitchyDialog.showAlert(ev, 'Login error', 'Unknown api error, response status ' + response.status+', details in console log.');
                             } else {
-                                RitchyDialog.showAlert('Login error', 'Unknown api error, response status '+ response.status+', response text: '+response.responseText);
+                                RitchyDialog.showAlert(ev, 'Login error', 'Unknown api error, response status '+ response.status+', response text: '+response.responseText);
                             }
                         } else {
-                            RitchyDialog.showAlert('Login error', 'Unknown api error: '+response);
+                            RitchyDialog.showAlert(ev, 'Login error', 'Unknown api error: '+response);
                         }
                 });
             },
