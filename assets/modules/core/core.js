@@ -47,6 +47,29 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
 
     var modulesBase = './modules';
 
+    RitchyApp.factory('RitchUtil', [function() {
+
+        var _isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+        // Firefox 1.0+
+        var _isFirefox = typeof InstallTrigger !== 'undefined';
+        // At least Safari 3+: "[object HTMLElementConstructor]"
+        var _isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+        // Internet Explorer 6-11
+        var _isIE = /*@cc_on!@*/false || !!document.documentMode;
+        // Edge 20+
+        var _isEdge = !_isIE && !!window.StyleMedia;
+        // Chrome 1+
+        var _isChrome = !!window.chrome && !!window.chrome.webstore;
+        // Blink engine detection
+        var _isBlink = (_isChrome || _isOpera) && !!window.CSS;
+
+        return {
+            isChrome: function() { return _isChrome; },
+            isOpera: function() { return _isOpera; },
+            isIE: function() { return _isIE; }
+        }
+    }]);
+
     /**
      * Сервис стандартной анимации
      */
@@ -73,7 +96,8 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
     /**
      * Сервис реализующий логику сообщений и форм ввода/выбора значений
      */
-    RitchyApp.factory('RitchyDialog', ['$mdDialog', '$mdMedia', 'RitchyAnim', function($mdDialog, $mdMedia, RitchyAnim) {
+    RitchyApp.factory('RitchyDialog', ['$mdDialog', '$mdMedia', 'RitchyAnim', '$q', '$timeout', '$document', 'RitchUtil',
+        function($mdDialog, $mdMedia, RitchyAnim, $q, $timeout, $document, RitchUtil) {
         return {
             // Показ инфомрационного уведомления на экране
             showAlert: function( ev, title, text, callback ) {
@@ -92,10 +116,81 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) || fullScreen;
                 var params = {
                     templateUrl: templateUrl,
-                    parent: angular.element(document.body),
-                    onShowing : function() {
+                    //hasBackdrop: false,
+                    //disableParentScroll: false,
+                    //parent: angular.element(document.body),
+                    onShowing : function( scope, element, options, controller ) {
+                        // Наложение стандартной анимации "всплытия" формы (из - за ошибки стандартной анимации)
+                        //element[0].querySelector('md-dialog').style.display = "none";
+                        if (RitchUtil.isChrome() || RitchUtil.isOpera()) {
+                            RitchyAnim.easeIn(element[0].querySelector('md-dialog'));
+                        } else {
+//                            element[0].querySelector('md-dialog').style.display = "none";
+                        }
                         // Fix проблемы "весящего" в пол экрана body при открытом диалоге
-                        document.body.style.top = "0";
+                        //$timeout(function() {
+                            //document.body.style.top = "0";
+                            //element[0].style.top = 0;
+                            //document.body.style.height = '100%';
+                        //}, 300);
+                    },
+                    // Переопределение стандартной анимации закрывания popup диалога
+                    onRemove: function(scope, element, options) {
+                        options.deactivateListeners();
+                        options.unlockScreenReader();
+                        options.hideBackdrop(options.$destroy);
+
+
+                        // По аналогии со стандартным методом - удаляются focus-trap элементы
+                        var focusTraps = element[0].querySelectorAll('div._md-dialog-focus-trap');
+                        angular.forEach(focusTraps, function(element, offset) {
+                            if (element && element.parentNode) {
+                                element.parentNode.removeChild(element);
+                            }
+                        });
+
+                        // Удаление элемента без анимации
+                        return detachAndClean();
+
+                        function removeContentElement() {
+                            if (!options.contentElement) return;
+
+                            options.reverseContainerStretch();
+
+                            if (!options.elementInsertionParent) {
+                                // When the contentElement has no parent, then it's a virtual DOM element, which should
+                                // be removed at close, as same as normal templates inside of a dialog.
+                                options.elementInsertionEntry.parentNode.removeChild(options.elementInsertionEntry);
+                            } else if (!options.elementInsertionSibling) {
+                                // When the contentElement doesn't have any sibling, then it can be simply appended to the
+                                // parent, because it plays no role, which index it had before.
+                                options.elementInsertionParent.appendChild(options.elementInsertionEntry);
+                            } else {
+                                // When the contentElement has a sibling, which marks the previous position of the contentElement
+                                // in the DOM, we insert it correctly before the sibling, to have the same index as before.
+                                options.elementInsertionParent.insertBefore(options.elementInsertionEntry, options.elementInsertionSibling);
+                            }
+                        }
+
+                        /**
+                         * Detach the element
+                         */
+                        function detachAndClean() {
+                            // Очищаем стандартную анимацию "скрывания" диалога
+                            options.clearAnimate();
+                            // Применяем стандартную анимацию закрывания диалога
+                            RitchyAnim.easeOut(element, function() {
+                                angular.element($document[0].body).removeClass('md-dialog-is-showing');
+                                // Only remove the element, if it's not provided through the contentElement option.
+                                if (!options.contentElement) {
+                                    element.remove();
+                                } else {
+                                    removeContentElement();
+                                }
+
+                                if (!options.$destroy) options.origin.focus();
+                            });
+                        }
                     },
                     clickOutsideToClose: true,
                     fullscreen: useFullScreen,
@@ -111,10 +206,16 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                         };
                     }]
                 };
+                if (!RitchUtil.isChrome() && !RitchUtil.isOpera()) {
+                    params.onComplete = function (scope, element) {
+//                        RitchyAnim.easeIn(element);
+//                        element[0].querySelector('md-dialog').style.display = "fixed";
+                    };
+                }
                 if (ev!=null) {
                     params.targetEvent = ev;
                 }
-console.log('params.targetEvent: ', params.targetEvent);
+
                 $mdDialog.show(params);
             }
         }
