@@ -96,8 +96,57 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
     /**
      * Сервис реализующий логику сообщений и форм ввода/выбора значений
      */
-    RitchyApp.factory('RitchyDialog', ['$mdDialog', '$mdMedia', 'RitchyAnim', '$q', '$timeout', '$document', 'RitchUtil',
-        function($mdDialog, $mdMedia, RitchyAnim, $q, $timeout, $document, RitchUtil) {
+    RitchyApp.factory('RitchyDialog', ['$mdDialog', '$mdMedia', 'RitchyAnim', '$q', '$timeout', '$document', 'RitchUtil', '$mdUtil', '$mdTheming', '$mdBottomSheet', '$animate', '$mdGesture', '$mdConstant', '$rootElement',
+        function($mdDialog, $mdMedia, RitchyAnim, $q, $timeout, $document, RitchUtil, $mdUtil, $mdTheming, $mdBottomSheet, $animate, $mdGesture, $mdConstant, $rootElement) {
+        var backdrop;
+
+            /**
+             * BottomSheet class to apply bottom-sheet behavior to an element
+             */
+            function BottomSheet(element, parent) {
+                var deregister = $mdGesture.register(parent, 'drag', { horizontal: false });
+                parent.on('$md.dragstart', onDragStart)
+                    .on('$md.drag', onDrag)
+                    .on('$md.dragend', onDragEnd);
+
+                return {
+                    element: element,
+                    cleanup: function cleanup() {
+                        deregister();
+                        parent.off('$md.dragstart', onDragStart);
+                        parent.off('$md.drag', onDrag);
+                        parent.off('$md.dragend', onDragEnd);
+                    }
+                };
+
+                function onDragStart(ev) {
+                    // Disable transitions on transform so that it feels fast
+                    element.css($mdConstant.CSS.TRANSITION_DURATION, '0ms');
+                }
+
+                function onDrag(ev) {
+                    var transform = ev.pointer.distanceY;
+                    if (transform < 5) {
+                        // Slow down drag when trying to drag up, and stop after PADDING
+                        transform = Math.max(-PADDING, transform / 2);
+                    }
+                    element.css($mdConstant.CSS.TRANSFORM, 'translate3d(0,' + (PADDING + transform) + 'px,0)');
+                }
+
+                function onDragEnd(ev) {
+                    if (ev.pointer.distanceY > 0 &&
+                        (ev.pointer.distanceY > 20 || Math.abs(ev.pointer.velocityY) > CLOSING_VELOCITY)) {
+                        var distanceRemaining = element.prop('offsetHeight') - ev.pointer.distanceY;
+                        var transitionDuration = Math.min(distanceRemaining / ev.pointer.velocityY * 0.75, 500);
+                        element.css($mdConstant.CSS.TRANSITION_DURATION, transitionDuration + 'ms');
+                        $mdUtil.nextTick($mdBottomSheet.cancel,true);
+                    } else {
+                        element.css($mdConstant.CSS.TRANSITION_DURATION, '');
+                        element.css($mdConstant.CSS.TRANSFORM, '');
+                    }
+                }
+            }
+
         return {
             // Показ инфомрационного уведомления на экране
             showAlert: function( ev, title, text, callback ) {
@@ -116,14 +165,81 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) || fullScreen;
                 var params = {
                     templateUrl: templateUrl,
-                    //hasBackdrop: false,
-                    //disableParentScroll: false,
-                    //parent: angular.element(document.body),
+                    hasBackdrop: true,
+                    disableParentScroll: true,
+                    parent: angular.element(document.body),
+                    onShow1: function onShow(scope, element, options, controller) {
+debugger;
+                        element = $mdUtil.extractElementByName(element, 'md-bottom-sheet');
+
+                        // prevent tab focus or click focus on the bottom-sheet container
+                        element.attr('tabindex',"-1");
+
+                        if (!options.disableBackdrop) {
+console.log('!options.disableBackdrop');
+                            // Add a backdrop that will close on click
+                            backdrop = $mdUtil.createBackdrop(scope, "_md-bottom-sheet-backdrop md-opaque");
+
+                            // Prevent mouse focus on backdrop; ONLY programatic focus allowed.
+                            // This allows clicks on backdrop to propogate to the $rootElement and
+                            // ESC key events to be detected properly.
+
+                            backdrop[0].tabIndex = -1;
+
+console.log('options.clickOutsideToClose: ',options.clickOutsideToClose);
+                            if (options.clickOutsideToClose) {
+console.log('backdrop: ',backdrop);
+                                backdrop.on('click', function() {
+console.log('[[click]]');
+                                    $mdUtil.nextTick($mdBottomSheet.cancel,true);
+                                });
+                            }
+
+                            $mdTheming.inherit(backdrop, options.parent);
+
+                            $animate.enter(backdrop, options.parent, null);
+                        }
+
+                        var bottomSheet = new BottomSheet(element, options.parent);
+console.log('bottomSheet: ',bottomSheet);
+                        options.bottomSheet = bottomSheet;
+
+                        $mdTheming.inherit(bottomSheet.element, options.parent);
+
+                        if (options.disableParentScroll) {
+                            options.restoreScroll = $mdUtil.disableScrollAround(bottomSheet.element, options.parent);
+                        }
+console.log('Ok there');
+
+                        return $animate.enter(bottomSheet.element, options.parent, backdrop)
+                            .then(function() {
+console.log('animation.then > > ');
+                                var focusable = $mdUtil.findFocusTarget(element) || angular.element(
+                                        element[0].querySelector('button') ||
+                                        element[0].querySelector('a') ||
+                                        element[0].querySelector($mdUtil.prefixer('ng-click', true))
+                                    ) || backdrop;
+
+                                if (options.escapeToClose) {
+                                    options.rootElementKeyupCallback = function(e) {
+                                        if (e.keyCode === $mdConstant.KEY_CODE.ESCAPE) {
+                                            $mdUtil.nextTick($mdBottomSheet.cancel,true);
+                                        }
+                                    };
+
+                                    $rootElement.on('keyup', options.rootElementKeyupCallback);
+                                    focusable && focusable.focus();
+                                }
+console.log('animation.then >> end');
+                            });
+
+                    },
                     onShowing : function( scope, element, options, controller ) {
+debugger;
                         // Наложение стандартной анимации "всплытия" формы (из - за ошибки стандартной анимации)
                         //element[0].querySelector('md-dialog').style.display = "none";
                         if (RitchUtil.isChrome() || RitchUtil.isOpera()) {
-                            RitchyAnim.easeIn(element[0].querySelector('md-dialog'));
+//                            RitchyAnim.easeIn(element[0].querySelector('md-dialog'));
                         } else {
 //                            element[0].querySelector('md-dialog').style.display = "none";
                         }
