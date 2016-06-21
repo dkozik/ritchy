@@ -47,6 +47,21 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
 
     var modulesBase = './modules';
 
+    RitchyApp.directive('rcontent', function ($compile) {
+        return {
+            replace: true,
+            link: function( scope, ele, attrs ) {
+                scope.$watch(attrs.rcontent, function(html) {
+                    if (!html) {
+                        return;
+                    }
+                    ele.html((typeof(html) === 'string')?html:html.data);
+                    $compile(ele.contents())(scope);
+                })
+            }
+        }
+    });
+
     RitchyApp.factory('RitchUtil', [function() {
 
         var _isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
@@ -580,12 +595,7 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                         };
                     }]
                 };
-                if (!RitchUtil.isChrome() && !RitchUtil.isOpera()) {
-                    params.onComplete = function (scope, element) {
-//                        RitchyAnim.easeIn(element);
-//                        element[0].querySelector('md-dialog').style.display = "fixed";
-                    };
-                }
+
                 if (ev!=null) {
                     params.targetEvent = ev;
                 }
@@ -719,12 +729,35 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
     /**
      * Контроллер реализующий логику основной страницы ядра
      */
-    RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', 'RitchyDialog', '$rootScope',
-        function($scope, $http, RitchyAuth, RitchyDialog, $rootScope) {
+    RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', 'RitchyDialog', '$rootScope','$templateRequest',
+        function($scope, $http, RitchyAuth, RitchyDialog, $rootScope, $templateRequest) {
 
-            //RitchyDialog.showAlert(null, 'title', 'text');
-        $rootScope.auth = RitchyAuth;
-//        console.log('RitchyAuth.isUserAuth: ', RitchyAuth.isUserAuth());
+            $rootScope.auth = RitchyAuth;
+
+            var sideBarLoaded = false;
+            function loadSideBar() {
+                if (!sideBarLoaded) {
+                    sideBarLoaded = true;
+                    $templateRequest('/modules/sidenav/views/index.html', false).then(function (html) {
+                        $scope.sidenav = html;
+                    });
+                }
+            }
+
+            $rootScope.$on('userLogin', function(event, data) {
+                loadSideBar();
+            });
+
+            $rootScope.$on('userLogout', function(event, data) {
+
+            });
+
+            RitchyAuth.isUserAuth(function( isUserAuth ) {
+                if (isUserAuth) {
+                    loadSideBar();
+                }
+            });
+
     }]);
 
     /**

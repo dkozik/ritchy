@@ -3,12 +3,17 @@
   --body-font-size: 16px;
   --login-panel-width: 330px;
   --recovery-panel-width: 500px;
+  --navbar-width: 80px;
 }
 
 body {
   background-color: var(--background);
   font-size: var(--body-font-size);
   height: auto;
+}
+
+body.navbar-expanded {
+  margin-left: var(--navbar-width);
 }
 
 span.ritchy-reference {
