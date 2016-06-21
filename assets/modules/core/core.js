@@ -606,17 +606,17 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
             get: function( controller, action, params, onSuccess, onError ) {
                 return this.request( controller, action, 'get', params, onSuccess, onError);
             },
-            post: function() {
+            post: function( controller, action, params, onSuccess, onError ) {
                 return this.request( controller, action, 'post', params, onSuccess, onError);
             },
             request: function( controller, action, method, params, onSuccess, onError ) {
                 var url = apiUrl+'/'+controller;
+                if (action>'') url+='/'+action;
                 var token = $rootScope.auth.getUserToken();
                 var req = {
                     method: method.toUpperCase(),
                     url: url
                 };
-                var config = {};
                 var native_params = {};
                 if (token>'') {
                     // Отправка токена с каждым запросом
@@ -626,14 +626,25 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                     native_params.token = token;
                 }
                 req.data = angular.extend({}, params, native_params);
-                if (action>'') url+='/'+action;
                 $http(req).then(function onSuccessPre( response ) {
                     // Вывод дополнительной информации в консоль в случае её наличия
                     if (response.data.debug>'') {
                         console.log(response.data.debug);
                     }
                     onSuccess && onSuccess( response );
-                }, onError);
+                }, function onErrorPre(response) {
+                    var message = '';
+                    if (angular.isObject(response)) {
+                        if (response.status<0) {
+                            message = 'Unknown api error, response status ' + response.status+', details in console log.';
+                        } else {
+                            message = 'Unknown api error, response status '+ response.status+', response text: '+response.responseText;
+                        }
+                    } else {
+                        message = 'Unknown api error: '+response;
+                    }
+                    onError && onError(response, message);
+                } );
             }
         }
     }]);
@@ -662,17 +673,9 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 }
                 firstStatLoaded = true;
                 callback && callback(isUserAuth);
-            }, function onError( response ) {
+            }, function onError( response, message ) {
                 firstStatLoaded = true;
-                if (angular.isObject(response)) {
-                    if (response.status<0) {
-                        RitchyDialog.showAlert(null, 'API error', 'Unknown api error: ' + response.status+'<br>Error details in console.', callback);
-                    } else {
-                        RitchyDialog.showAlert(null, 'API error', 'Unknown api error: ' + response.statusText, callback);
-                    }
-                } else {
-                    RitchyDialog.showAlert(null, 'API error', 'Unknown api error: '+response, callback);
-                }
+                RitchyDialog.showAlert(null, 'API error', message);
             });
         }
 
@@ -684,8 +687,8 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                     isUserAuth = false;
                     callback && callback(isUserAuth);
                 }
-            }, function onError( response ) {
-                RitchyDialog.showAlert(ev, 'API error', 'Unknown api error: '+response, callback);
+            }, function onError( response, message ) {
+                RitchyDialog.showAlert(ev, 'API error', message, callback);
             });
         }
 

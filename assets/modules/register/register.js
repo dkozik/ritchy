@@ -19,16 +19,8 @@
                 } else if (response.data.error>'') {
                     RitchyDialog.showAlert(ev, 'API error', response.data.error);
                 }
-            }, function onError( response ) {
-                if (angular.isObject(response)) {
-                    if (response.status<0) {
-                        RitchyDialog.showAlert(ev, 'API error', 'Unknown api error, response status ' + response.status+', details in console log.');
-                    } else {
-                        RitchyDialog.showAlert(ev, 'API error', 'Unknown api error, response status '+ response.status+', response text: '+response.responseText);
-                    }
-                } else {
-                    RitchyDialog.showAlert(ev, 'API error', 'Unknown api error: '+response);
-                }
+            }, function onError( response, message ) {
+                RitchyDialog.showAlert(ev, 'API error', message);
             });
 
 
@@ -42,10 +34,34 @@
                 termsAgree: false,
                 canRegister: false,
                 changed: function( ev ) {
-                    this.canRegister = this.name>'' && this.company>'' && this.email>'' && this.password>'' && this.delivery && this.termsAgree;
+console.log('changed');
+                    this.canRegister = this.name>'' && this.company>'' && this.email>'' && this.password>'' && this.termsAgree;
                 },
                 doRegister: function( ev ) {
-
+                    var params = {
+                        name: this.name,
+                        company: this.company,
+                        country: this.country,
+                        email: this.email,
+                        password: this.password,
+                        delivery: this.delivery+''
+                    };
+console.log('params: ', params);
+                    RitchyApi.post('register', null, params, function onSuccess( response ) {
+                        if (response.data.code==1) {
+                            RitchyDialog.showAlert(ev, 'Registration result', 'Registration successfuly complete, wait for email notification', function() {
+                                RitchyAnim.easeOut(target, function() {
+                                    $rootScope.$apply(function() {
+                                        $location.path('/login');
+                                    });
+                                });
+                            });
+                        } else if (response.data.error>'') {
+                            RitchyDialog.showAlert(ev, 'Registration API error', response.data.error);
+                        }
+                    }, function onError() {
+                        RitchyDialog.showAlert(ev, 'Registration API error', message);
+                    });
                 },
                 doSignIn: function(ev) {
                     RitchyAnim.easeOut(target, function() {

@@ -41,7 +41,7 @@ div(class="mui-container register-holder" ng-controller="register" ng-cloak)
                 md-checkbox(class="md-primary md-body-1" md-no-ink ng-model="user.delivery" aria-label="Keep informed with news") Stay informed about Ritchy products.&nbsp;
                     span(class="ritchy-reference" ng-click="user.showMoreInfo($event); $event.stopPropagation();") Learn more
             div
-                md-checkbox(class="md-primary md-body-1" md-no-ink ng-model="user.termsAgree" aria-label="Terms of use agreement") I have read and agree to the&nbsp;
+                md-checkbox(class="md-primary md-body-1" md-no-ink ng-model="user.termsAgree" aria-label="Terms of use agreement" ng-change="user.changed($event)") I have read and agree to the&nbsp;
                     span(class="ritchy-reference" ng-click="user.showTerms($event); $event.stopPropagation();") Terms of Use
                     font &nbsp;and&nbsp;
                     span(class="ritchy-reference" ng-click="user.showPrivacy($event); $event.stopPropagation();") Privacy Policy
