@@ -9,7 +9,7 @@
 
             // Animation
             var target = document.querySelector("div.recovery-pane");
-            RitchyAnim.easeIn(target);
+            RitchyAnim.easeInBounce(target);
             
             $scope.user = {
                 email: '',

@@ -8,7 +8,7 @@
         function($scope, $element, $location, $rootScope, RitchyApi, RitchyDialog, RitchyAuth, RitchyAnim) {
 
             var target = document.querySelector('div.register-pane');
-            RitchyAnim.easeIn(target);
+            RitchyAnim.easeInBounce(target);
 
             $scope.countryList = {
                 list: [

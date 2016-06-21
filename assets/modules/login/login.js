@@ -8,7 +8,7 @@
 
         // Login panel animation
         var target = document.querySelector('div.login-pane');
-        RitchyAnim.easeIn(target);
+        RitchyAnim.easeInBounce(target);
 
         $scope.user = {
             login: 'admin',

@@ -75,11 +75,17 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
      */
     RitchyApp.factory('RitchyAnim', [function() {
         return {
-            easeIn: function( target ) {
+            easeInBounce: function( target ) {
                 var tl = new TimelineMax();
                 TweenLite.set(target, {scale: 0.5, autoAlpha:0});
                 tl.to(target, 0.3, {autoAlpha: 1});
                 tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+            },
+            easeIn: function( target ) {
+                var tl = new TimelineMax();
+                TweenLite.set(target, {scale: 0.5, autoAlpha:0});
+                tl.to(target, 0.3, {autoAlpha: 1});
+                tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0), autoRound: false}, 0);
             },
             easeOut: function( target, callback ) {
                 var tl = new TimelineMax();
@@ -267,54 +273,12 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 options.reverseContainerStretch = stretchDialogContainerToViewport(container, options);
 
                 var dialogEl = container.find('md-dialog');
-                var animator = $mdUtil.dom.animator;
-                var buildTranslateToOrigin = animator.calculateZoomToOrigin;
-                var translateOptions = {transitionInClass: '_md-transition-in', transitionOutClass: '_md-transition-out'};
-                var from = animator.toTransformCss(buildTranslateToOrigin(dialogEl, options.openFrom || options.origin));
-                var to = animator.toTransformCss("");  // defaults to center display (or parent or $rootElement)
 
                 if (options.fullscreen) {
                     dialogEl.addClass('md-dialog-fullscreen');
                 }
 
-                return animator
-                    .translate3d(dialogEl, from, to, translateOptions)
-                    .then(function(animateReversal) {
-                        // Build a reversal translate function synced to this translation...
-                        options.reverseAnimate = function() {
-                            delete options.reverseAnimate;
-
-                            if (options.closeTo) {
-                                // Using the opposite classes to create a close animation to the closeTo element
-                                translateOptions = {transitionInClass: '_md-transition-out', transitionOutClass: '_md-transition-in'};
-                                from = to;
-                                to = animator.toTransformCss(buildTranslateToOrigin(dialogEl, options.closeTo));
-
-                                return animator
-                                    .translate3d(dialogEl, from, to,translateOptions);
-                            }
-
-                            return animateReversal(
-                                to = animator.toTransformCss(
-                                    // in case the origin element has moved or is hidden,
-                                    // let's recalculate the translateCSS
-                                    buildTranslateToOrigin(dialogEl, options.origin)
-                                )
-                            );
-
-                        };
-
-                        // Builds a function, which clears the animations / transforms of the dialog element.
-                        // Required for contentElements, which should not have the the animation styling after
-                        // the dialog is closed.
-                        options.clearAnimate = function() {
-                            delete options.clearAnimate;
-                            return animator
-                                .translate3d(dialogEl, to, animator.toTransformCss(''), {});
-                        };
-
-                        return true;
-                    });
+                return $q.when(RitchyAnim.easeIn(dialogEl));
             }
 
             function activateListeners(element, options) {
@@ -543,23 +507,9 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                             }
                         }
                     },
-                    onShowing : function( scope, element, options, controller ) {
-                        // Наложение стандартной анимации "всплытия" формы (из - за ошибки стандартной анимации)
-                        //element[0].querySelector('md-dialog').style.display = "none";
-                        if (RitchUtil.isChrome() || RitchUtil.isOpera()) {
-//                            RitchyAnim.easeIn(element[0].querySelector('md-dialog'));
-                        } else {
-//                            element[0].querySelector('md-dialog').style.display = "none";
-                        }
-                        // Fix проблемы "весящего" в пол экрана body при открытом диалоге
-                        //$timeout(function() {
-                            //document.body.style.top = "0";
-                            //element[0].style.top = 0;
-                            //document.body.style.height = '100%';
-                        //}, 300);
-                    },
                     // Переопределение стандартной анимации закрывания popup диалога
                     onRemove: function(scope, element, options) {
+
                         options.deactivateListeners();
                         options.unlockScreenReader();
                         options.hideBackdrop(options.$destroy);
@@ -601,7 +551,7 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                          */
                         function detachAndClean() {
                             // Очищаем стандартную анимацию "скрывания" диалога
-                            options.clearAnimate();
+                            //options.clearAnimate();
                             // Применяем стандартную анимацию закрывания диалога
                             RitchyAnim.easeOut(element, function() {
                                 angular.element($document[0].body).removeClass('md-dialog-is-showing');
