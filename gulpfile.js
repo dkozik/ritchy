@@ -153,8 +153,8 @@ var nonStandardModules = {
                 path.join(moduleBase, 'js/angular/angular-aria.min.js'),
                 path.join(moduleBase, 'js/angular/angular-animate.min.js'),
                 path.join(moduleBase, 'js/angular/angular-messages.min.js'),
-//                path.join(moduleBase, 'js/angular/angular-material.min.js'),
-                    path.join(moduleBase, 'js/angular/angular-material.js'),
+                path.join(moduleBase, 'js/angular/angular-material.min.js'),
+//                    path.join(moduleBase, 'js/angular/angular-material.js'),
                 path.join(moduleBase, 'js/angular/mui.min.js'),
                 path.join(moduleBase, 'js/greensock/minified/TweenMax.min.js')
             ])
