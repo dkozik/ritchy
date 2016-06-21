@@ -18,7 +18,7 @@
                 this.canLogin = this.login>'' && this.password>'';
             },
             doLogin: function( ev ) {
-                RitchyApi.request('login', null, {login: this.login, password: this.password},
+                RitchyApi.post('login', null, {login: this.login, password: this.password},
                 function onSuccess(response) {
                     if (response.data.code==1) {
                         RitchyAuth.updateToken(response.data.token);

@@ -30,7 +30,7 @@ div(class="mui-container register-holder" ng-controller="register" ng-cloak)
                     md-input-container(class="md-block" flex-xs)
                         label Country
                         md-select(name="country" required ng-model="user.country" ng-change="user.changed($event)")
-                            md-option(ng-repeat="country in countryList.list" value="{{country.code}}") {{country.name}}
+                            md-option(ng-selected="country.selected" ng-repeat="country in countryList.list" value="{{country.code}}") {{country.title}}
                         div(ng-messages="country.$error" class="md-errors-spacer")
                             div(ng-message="required") Country must be selected from list
                     +requiredEmail("Email", "email", "user.email", "Your email must be between 10 and 100 characters long and look like an e-mail address.", "user.changed($event)")

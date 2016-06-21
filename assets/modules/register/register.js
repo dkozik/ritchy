@@ -10,15 +10,27 @@
             var target = document.querySelector('div.register-pane');
             RitchyAnim.easeInBounce(target);
 
-            $scope.countryList = {
-                list: [
-                    {name: 'Czech Republic', code: 'ch'},
-                    {name: 'Poland', code: 'pl'},
-                    {name: 'Romania', code: 'rm'},
-                    {name: 'Russian Federation', code: 'ru'},
-                    {name: 'United Kingdom', code: 'uk'}
-                ]
-            };
+            $scope.countryList = {};
+
+            // Получение списка стран
+            RitchyApi.get('dict', null, {dictname: 'countries'}, function onSuccess( response ) {
+                if (response.data.code==1) {
+                    $scope.countryList.list = response.data.list;
+                } else if (response.data.error>'') {
+                    RitchyDialog.showAlert(ev, 'API error', response.data.error);
+                }
+            }, function onError( response ) {
+                if (angular.isObject(response)) {
+                    if (response.status<0) {
+                        RitchyDialog.showAlert(ev, 'API error', 'Unknown api error, response status ' + response.status+', details in console log.');
+                    } else {
+                        RitchyDialog.showAlert(ev, 'API error', 'Unknown api error, response status '+ response.status+', response text: '+response.responseText);
+                    }
+                } else {
+                    RitchyDialog.showAlert(ev, 'API error', 'Unknown api error: '+response);
+                }
+            });
+
 
             $scope.user = {
                 name: '',

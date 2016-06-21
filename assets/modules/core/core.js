@@ -603,20 +603,31 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
         var apiUrl = 'http://private-2251e-ritchy2.apiary-mock.com';
 
         return {
-            request: function( controller, action, params, onSuccess, onError ) {
+            get: function( controller, action, params, onSuccess, onError ) {
+                return this.request( controller, action, 'get', params, onSuccess, onError);
+            },
+            post: function() {
+                return this.request( controller, action, 'post', params, onSuccess, onError);
+            },
+            request: function( controller, action, method, params, onSuccess, onError ) {
                 var url = apiUrl+'/'+controller;
                 var token = $rootScope.auth.getUserToken();
+                var req = {
+                    method: method.toUpperCase(),
+                    url: url
+                };
                 var config = {};
                 var native_params = {};
                 if (token>'') {
                     // Отправка токена с каждым запросом
                     // Поддержка OAuth 2.0 временно отменяется
-                    // config.headers = {'Authorization': 'Bearer '+token};
+                    // req.headers = {'Authorization': 'Bearer '+token};
                     // Token переходит в параметры каждого запроса
                     native_params.token = token;
                 }
+                req.data = angular.extend({}, params, native_params);
                 if (action>'') url+='/'+action;
-                $http.post(url, angular.extend({}, params, native_params), config).then(function onSuccessPre( response ) {
+                $http(req).then(function onSuccessPre( response ) {
                     // Вывод дополнительной информации в консоль в случае её наличия
                     if (response.data.debug>'') {
                         console.log(response.data.debug);
@@ -643,7 +654,7 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 callback && callback(isUserAuth);
                 return;
             }
-            RitchyApi.request('login', 'stat', null, function onSuccess( response ) {
+            RitchyApi.post('login', 'stat', null, function onSuccess( response ) {
                 if (response.data.error>'') {
                     RitchyDialog.showAlert(null, 'API error', 'Request user stats returned error: '+response.data.error);
                 } else if (response.data.loggedIn) {
@@ -666,7 +677,7 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
         }
 
         function requestLogout( callback, ev ) {
-            RitchyApi.request('logout', null, null, function onSuccess( response ) {
+            RitchyApi.post('logout', null, null, function onSuccess( response ) {
                 if (response.data.error>'') {
                     RitchyDialog.showAlert(ev, 'API error', 'Error when logout: '+response.data.error, callback);
                 } else {

@@ -25,7 +25,7 @@
                     });
                 },
                 doRecovery: function( ev ) {
-                    RitchyApi.request('recovery', null, {email: this.email},
+                    RitchyApi.post('recovery', null, {email: this.email},
                     function onSuccess( response ) {
                         if (response.data.code==1) {
                             RitchyDialog.showAlert(ev, 'Recovery result', 'Password reset instructions sent to email', function() {
