@@ -731,33 +731,7 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
      */
     RitchyApp.controller('core',['$scope', '$http', 'RitchyAuth', 'RitchyDialog', '$rootScope','$templateRequest',
         function($scope, $http, RitchyAuth, RitchyDialog, $rootScope, $templateRequest) {
-
             $rootScope.auth = RitchyAuth;
-
-            var sideBarLoaded = false;
-            function loadSideBar() {
-                if (!sideBarLoaded) {
-                    sideBarLoaded = true;
-                    $templateRequest('/modules/sidenav/views/index.html', false).then(function (html) {
-                        $scope.sidenav = html;
-                    });
-                }
-            }
-
-            $rootScope.$on('userLogin', function(event, data) {
-                loadSideBar();
-            });
-
-            $rootScope.$on('userLogout', function(event, data) {
-
-            });
-
-            RitchyAuth.isUserAuth(function( isUserAuth ) {
-                if (isUserAuth) {
-                    loadSideBar();
-                }
-            });
-
     }]);
 
     /**

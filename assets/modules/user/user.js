@@ -4,8 +4,10 @@
 
 (function() {
 
-    RitchyApp.controller('user', ['$scope',
-        function ($scope) {
+    RitchyApp.controller('user', ['$scope', 'RitchySidebar',
+        function ($scope, RitchySidebar) {
+
+            RitchySidebar.connect($scope);
             console.log(' [[build user]]');
         }]);
 
