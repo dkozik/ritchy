@@ -29,8 +29,10 @@
 
         function expand() {
             var tl = new TimelineMax();
-            //TweenLite.set($element[0]);
-            RitchyAnim.easeIn($element[0]);
+
+            TweenLite.set($element[0], {rotationY: '90'});
+            tl.to($element[0], 0.5, {rotationY: '0', ease: Back.easeOut.config(2)});
+            //RitchyAnim.easeIn($element[0]);
             angular.element($document[0].body).addClass('navbar-expanded');
         }
 
