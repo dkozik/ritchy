@@ -111,6 +111,13 @@ gulp.task('css', function() {
         .pipe(livereload(server));
 });
 
+// Сборка CSS
+gulp.task('fonts', function() {
+    gulp.src(['./assets/fonts/*.*'])
+        .pipe(gulp.dest('./public/fonts'))
+        .pipe(livereload(server));
+});
+
 var compileMethods = {
     jade: function(moduleBase, publishBase, folder) {
         gulp.src([path.join(moduleBase, 'views')+path.sep+'*.jade'])
@@ -224,6 +231,7 @@ gulp.task('watch', function() {
     // Предварительная сборка проекта
     gulp.run('stylus');
     gulp.run('css');
+    gulp.run('fonts');
     gulp.run('images');
     gulp.run('js');
     gulp.run('modules');

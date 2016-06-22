@@ -1,4 +1,154 @@
 //
    Created by admin on 21.06.2016.
 
-div(ng-controller="user" ng-cloak) INDEX OF USER
+div(id="user-info" ng-controller="user" ng-cloak)
+    div(class="menu-container")
+        div(class="menu-space-holder1")
+            div(class="menu-item")
+                div(class="md-title")
+                    p Konstantin
+                    p Konstantinopolsky
+                    p &nbsp;
+                div(class="md-body-1")
+                    p Thomson Reuters Company, ltd
+            div(class="menu-item")
+                div Account details
+            div(class="menu-item")
+                div My pricelist
+            div(class="menu-item")
+                div My discounts
+            div(class="menu-item")
+                div(style="display: inline") Logout
+                img(src="./img/icons/u189.png" style="margin-left: 10px")
+    div(class="content")
+        div(class="mui-panel")
+            div(class="caption md-title") Userpic
+            table
+                tr
+                    td
+                        img(src="http://d2t44wh9rnwl5y.cloudfront.net/gsc/G5XNB1/29/ef/93/29ef93de50b148349c09bf644f96e31a/images/my_details/photo_user_u459.png?token=06f01da27e621d62dc6e03434b0c8710")
+                        i(class="fa fa-times")
+                    td
+                        md-button(class="md-raised") Select image
+                        span(class="md-body-1") Jpeg, png
+                        div(class="md-body-1")
+                            p Upload image 1000px height
+                            p or width, and never more than
+                            p 1MB
+                tr
+                    td(colspan=2)
+                        div(class="caption md-title") User details
+                tr
+                    td
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label First Name
+                            input
+                    td
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label Last Name
+                            input
+                tr
+                    td(colspan="2")
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label E-mail
+                            input
+                tr
+                    td
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label Phone number
+                            input
+                    td
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label Phone number 2 (optional)
+                            input
+                tr
+                    td(colspan=2)
+                        div(class="caption md-title") Company details
+                tr
+                    td(colspan=2)
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label Company name
+                            input
+                tr
+                    td(colspan=2)
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label Company registration number
+                            input
+                tr
+                    td(colspan=2)
+                        md-input-container(class="md-block" flex-gt-sm)
+                            label VAT number
+                            input
+                tr
+                    td(colspan=2)
+                        md-button(class="md-raised md-primary") Save details
+    div(class="content")
+        div(class="mui-panel")
+            div(class="caption md-title") Addresses
+                md-radio-group
+                    table(id="addresses")
+                        tr
+                            td(class="md-body-2") Shipping address
+                            td(class='md-body-2') Default
+                        tr
+                            td(class="md-body-1") 1. Russian Federation, Moscow, Lenin St., 2-25
+                                i(class="fa fa-pencil" style="margin-left: 10px;")
+                            td
+                                md-radio-button(flex class="md-primary" ng-value="1" aria-label="1")
+                        tr
+                            td(class="md-body-1") 2. Russian Federation, Moscow, Petrova St., 3-2-123
+                                i(class="fa fa-pencil" style="margin-left: 10px;")
+                            td
+                                md-radio-button(flex class="md-primary" ng-value="2" aria-label="2")
+                        tr
+                            td(colspan=2)
+                                md-button(class="md-raised" style="width:100%;") +   Add address
+            div(style="background-color: rgb(242, 242, 242);") Billiing and shipping address the same?
+            div(class="caption md-title") Billing address
+                md-radio-group
+                    table(id="bill-addresses")
+                        tr
+                            td(class="md-body-2") Shipping address
+                            td(class='md-body-2') Default
+                        tr
+                            td(class="md-body-1") 1. Russian Federation, Moscow, Lenin St., 2-25
+                                i(class="fa fa-pencil" style="margin-left: 10px;")
+                            td
+                                md-radio-button(flex class="md-primary" ng-value="1" aria-label="1")
+                        tr
+                            td(class="md-body-1") 2. Russian Federation, Moscow, Petrova St., 3-2-123
+                                i(class="fa fa-pencil" style="margin-left: 10px;")
+                            td
+                                md-radio-button(flex class="md-primary" ng-value="2" aria-label="2")
+                        tr
+                            td(colspan=2)
+                                md-button(class="md-raised" style="width:100%;") +   Add address
+            md-button(class="md-raised md-primary") Save addresses
+    div(class="content")
+        div(class="mui-panel")
+            div(class="caption md-title") Change password
+            div
+                md-input-container(class="md-block")
+                    label Old password
+                    input(type="password")
+            div
+                md-input-container(class="md-block")
+                    label New password
+                    input(type="password")
+            div
+                md-input-container(class="md-block")
+                    label New password one more time
+                    input(type="password")
+            md-button(class="md-raised md-primary") Save password
+    div(class="footer md-body-1")
+        span Privacy policy   Cookies policy   Terms and conditions   Delivery  Contact Us
+        hr
+        table
+            tr
+                td 2016 © RITCHY GROUP Ltd.
+                td(class="right") +420 225 067 840 (Europe), +1 844 255 8848 (US), + 852 8199 9473 (Asia)
+            tr
+                td Products manufactured by RITCHY GROUP Ltd.
+                td(class="right") info@ritchy.com
+        hr
+        span WARNING: Nicotine is an addictive substance. This product has not been approved by the U.S. FDA as a smoking cessation product. This product is simply an alternative to tobacco smoking and should only be used by long-term smokers. This product is not a smoking cessation device. This product is not intended to diagnose, treat, prevent, cure, or mitigate any disease or medical condition or offer any therapeutic benefit. Do not use this product if you are under the legal age of smoking or if you are sensitive to nicotine or inhalants. Do not use this product if you have or if you are at risk of having any respiratory conditions, heart disease, high blood pressure or diabetes. Consult your doctor before use if you have any medical conditions. Do not use if you are pregnant or nursing. Discontinue use of this product immediately if you experience symptoms such as nausea, dizziness, a weak or rapid heartbeat, vomiting, diarrhea, or any negative physical symptom. Keep product away from children and pets.
