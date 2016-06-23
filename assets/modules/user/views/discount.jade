@@ -2,21 +2,35 @@
    Created by kozik on 23.06.2016.
 
 div(id="user-discount" ng-controller="user" ng-cloak)
-    div(class="menu-container")
-        div(class="menu-space-holder1")
-            div(class="menu-item")
-                div(class="md-title")
-                    p Konstantin
-                    p Konstantinopolsky
-                    p &nbsp;
-                div(class="md-body-1")
-                    p Thomson Reuters Company, ltd
-            div(class="menu-item")
-                div Account details
-            div(class="menu-item")
-                div My pricelist
-            div(class="menu-item")
-                div My discounts
-            div(class="menu-item")
-                div(style="display: inline") Logout
-                img(src="./img/icons/u189.png" style="margin-left: 10px")
+    include ./include/menu.jade
+    div(class="content")
+        div(class="mui-panel")
+            div(class="caption md-title") My discounts
+            div(style="margin-top: 30px;") Shown here are your discounts
+            | for the basic products RITCHY Group Ltd.
+            table(style="margin-top: 30px;")
+                tr
+                    td(class="md-title") General order discounts
+                    td 5,000 CZK for order above 25,000 CZK
+                tr
+                    td(colspan=2)
+                        hr
+                tr
+                    td(class="md-title") Free shipping
+                    td For order above 25,000 CZK
+                tr
+                    td(colspan=2)
+                        hr
+                tr
+                    td(class="md-title") Rebate
+                    td -
+                tr
+                    td(colspan=2)
+                        hr
+                tr
+                    td(class="md-title") Refund
+                    td -
+                tr
+                    td(colspan=2)
+                        hr
+    include ./include/footer.jade

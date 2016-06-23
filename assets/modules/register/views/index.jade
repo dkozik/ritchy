@@ -24,7 +24,7 @@ div(class="mui-container register-holder" ng-controller="register" ng-cloak)
             div
                 h2(class="md-display-1") Registration
             md-content(md-theme="default" layout-gt-sm="row" layout-padding)
-                div
+                div(id="inputs-holder")
                     +requiredInput("Name", "name", "user.name", "User name cannot be empty", "user.changed($event)")
                     +requiredInput("Company name", "company", "user.company", "User company cannot be empty", "user.changed($event)")
                     md-input-container(class="md-block" flex-xs)
