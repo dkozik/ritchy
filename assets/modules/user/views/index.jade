@@ -21,17 +21,19 @@ div(id="user-info" ng-controller="user" ng-cloak)
                 div(style="display: inline") Logout
                 img(src="./img/icons/u189.png" style="margin-left: 10px")
     div(class="content")
-        div(class="mui-panel")
+        div(id="avatar_block" class="mui-panel")
             div(class="caption md-title") Userpic
             table
                 tr
                     td
-                        img(src="http://d2t44wh9rnwl5y.cloudfront.net/gsc/G5XNB1/29/ef/93/29ef93de50b148349c09bf644f96e31a/images/my_details/photo_user_u459.png?token=06f01da27e621d62dc6e03434b0c8710")
-                        i(class="fa fa-times")
+                        div(style="height: 100%; vertical-align: bottom;")
+                            img(src="./img/avatar/photo_user_u459.png")
+                            div(style="display: inline-block; height: 100%;")
+                                i(class="fa fa-times")
                     td
                         md-button(class="md-raised") Select image
                         span(class="md-body-1") Jpeg, png
-                        div(class="md-body-1")
+                        div(class="md-body-1 inform-block")
                             p Upload image 1000px height
                             p or width, and never more than
                             p 1MB
@@ -103,7 +105,9 @@ div(id="user-info" ng-controller="user" ng-cloak)
                         tr
                             td(colspan=2)
                                 md-button(class="md-raised" style="width:100%;") +   Add address
-            div(style="background-color: rgb(242, 242, 242);") Billiing and shipping address the same?
+            div(id="quest_block1") Billiing and shipping address the same?
+                md-checkbox(aria-label="Yes" style="margin-left: 10px") Yes
+                md-checkbox(aria-label="No") No
             div(class="caption md-title") Billing address
                 md-radio-group
                     table(id="bill-addresses")
