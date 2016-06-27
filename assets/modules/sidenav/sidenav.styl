@@ -1,10 +1,27 @@
 
-div.sidenav {
-  width: var(--navbar-width);
+div#sidenav {
   position: fixed;
   color: rgb(255,255,255);
   top: 0;
   left: 0;
-  height: 100%;
   background-color:rgba(67, 67, 67, 1);
 }
+
+div#sidenav-parent {
+  position: relative;
+  text-align: center;
+}
+
+div#sidenav, div#sidenav-parent, div.sidenav-face {
+  width: var(--navbar-width);
+  height: 100%;
+}
+
+div#sidenav-parent, div.sidenav-face {
+  position: absolute;
+}
+
+div#face1 { background:#00F; }
+div#face2 { background:#f0f; }
+div#face3 { background:#063; }
+div#face4 { background:#c00; }

@@ -1,4 +1,9 @@
 //
    Created by admin on 21.06.2016.
 
-div(class="sidenav" ng-controller="sidenav") SB
+div(id="sidenav" ng-controller="sidenav")
+    div(id="sidenav-parent" ng-click="rotate()")
+        div(class="sidenav-face" id="face1") face1
+        div(class="sidenav-face" id="face2") face2
+        div(class="sidenav-face" id="face3") face3
+        div(class="sidenav-face" id="face4") face4

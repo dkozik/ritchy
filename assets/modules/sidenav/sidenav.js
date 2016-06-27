@@ -26,22 +26,15 @@
 
     RitchyApp.controller('sidenav', ['$scope', '$document', '$element', 'RitchyAnim',
         function($scope, $document, $element, RitchyAnim) {
+            
+            var container = $element;
+            var parent = document.querySelector('div#sidenav-parent');
+            var faces = document.querySelectorAll('div.sidenav-face');
+            var cube = new Cube($element, parent, faces);
 
-        function expand() {
-            var tl = new TimelineMax();
-
-            TweenLite.set($element[0], {rotationY: '90'});
-            tl.to($element[0], 0.5, {rotationY: '0', ease: Back.easeOut.config(2)});
-            //RitchyAnim.easeIn($element[0]);
-            angular.element($document[0].body).addClass('navbar-expanded');
-        }
-
-        function collapse() {
-            RitchyAnim.easeOut($element[0]);
-            angular.element($document[0].body).removeClass('navbar-expanded');
-        }
-
-        expand();
+            $scope.rotate = function() {
+                cube.rotateLeft();
+            }
 
     }]);
     

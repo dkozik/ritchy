@@ -163,9 +163,10 @@ var nonStandardModules = {
                 path.join(moduleBase, 'js/angular/angular-material.min.js'),
 //                    path.join(moduleBase, 'js/angular/angular-material.js'),
                 path.join(moduleBase, 'js/angular/mui.min.js'),
-                path.join(moduleBase, 'js/greensock/minified/TweenMax.min.js')
+                path.join(moduleBase, 'js/greensock/minified/TweenMax.min.js'),
+                path.join(moduleBase, 'js/lib/**/*.js')
             ])
-                .pipe(concat('angular.min.js'))
+                .pipe(concat('core.min.js'))
                 .pipe(gulp.dest(path.join(publishBase, 'js')))
                 .pipe(livereload(server));
         }
