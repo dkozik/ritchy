@@ -30,7 +30,9 @@
             var container = $element;
             var parent = document.querySelector('div#sidenav-parent');
             var faces = document.querySelectorAll('div.sidenav-face');
-            var cube = new Cube($element, parent, faces);
+            var cube = new Cube(container, parent, faces);
+
+            cube.show();
 
             $scope.rotate = function() {
                 cube.rotateLeft();

@@ -2,8 +2,29 @@
    Created by admin on 21.06.2016.
 
 div(id="sidenav" ng-controller="sidenav")
-    div(id="sidenav-parent" ng-click="rotate()")
-        div(class="sidenav-face" id="face1") face1
-        div(class="sidenav-face" id="face2") face2
-        div(class="sidenav-face" id="face3") face3
-        div(class="sidenav-face" id="face4") face4
+    div(id="sidenav-parent")
+        div(class="sidenav-face" id="face1")
+            div(class="logo-block")
+                img(src="./img/logo_transparent.png" ng-click="rotate()")
+            div(class="block avatar-block")
+                span(class="vertical-space")
+                img(src="./img/avatar/user_photo_devholder.png")
+            div(class="block_h")
+                md-button(class="md-fab" aria-label="New order")
+                    img(src="./img/icons/u374.png")
+                span New order
+            div(class="block_h")
+                md-button(class="md-fab not-enabled" aria-label="My orders")
+                    img(src="./img/icons/u402.png")
+                span My orders
+            div(class="block_h")
+                md-button(class="md-fab not-enabled" aria-label="Downloads")
+                    img(src="./img/icons/u404.png")
+                span Downloads
+            div(class="block_h")
+                md-button(class="md-fab not-enabled" aria-label="Helpdesk")
+                    img(src="./img/icons/u406.png")
+                span Helpdesk
+        div(class="sidenav-face" id="face2")
+        div(class="sidenav-face" id="face3")
+        div(class="sidenav-face" id="face4")

@@ -3,6 +3,9 @@
  */
 var Cube = function( container, parent, face1, face2, face3, face4 ) {
     var width = parent.clientWidth;
+    var visible = false;
+    var ang = 0;
+
     if (face1 instanceof Array || face1 instanceof NodeList) {
         face2=face1[1];
         face3=face1[2];
@@ -18,9 +21,11 @@ var Cube = function( container, parent, face1, face2, face3, face4 ) {
     TweenMax.to(face2, 0, { rotationY: -90, x : -width/2 });
     TweenMax.to(face3, 0, { rotationY: 180, z : -width/2 });
     TweenMax.to(face4, 0, { rotationY: 90, x : width/2 });
+    TweenMax.to(parent, 0, { rotationY: 90, transformOrigin:"left top", x: -width });
+    TweenMax.to(container, 0, { display: 'none' });
+
 
     var angleManager = new (function() {
-        var ang = 0;
 
         return {
             right: function() {
@@ -53,20 +58,56 @@ var Cube = function( container, parent, face1, face2, face3, face4 ) {
     })();
 
     var rotateCube = function( ang ) {
-//    TweenMax.to([face1, face2, face3, face4], 0.3, {autoAlpha : 0.1});
-        TweenMax.to(parent, 0.5, { rotationY: ang,  ease: Back.easeOut.config(1.6) });
-//    TweenMax.to([face1, face2, face3, face4], 1.5, {autoAlpha : 0.9});
+        var tl = new TimelineLite();
+        tl.to([face1, face2, face3, face4], .2, {autoAlpha : 0.6})
+            .to([face1, face2, face3, face4], .3, {autoAlpha : 1});
+        TweenMax.to(parent, 0.5, { rotationY: ang,  transformOrigin:"50% 50%", ease: Back.easeOut.config(1.6) });
     };
 
     return {
+        show: function() {
+            if (!visible) {
+                visible = true;
+                var tl = new TimelineLite();
+                tl.to(container, 0, { display: 'block' })
+                    .to(container, .5, { autoAlpha: 1 });
+                TweenMax.to(parent, .5, {rotationY:0, transformOrigin:"left top", x: 0, autoAlpha: 1});
+            }
+        },
+        hide: function() {
+            if (visible) {
+                visible = false;
+                var c = (ang / 90) % 4;
+                var tl = new TimelineLite(), tl2 = new TimelineLite();
+                // Подменяем угол поворота в диапазоне от 0..360 (если вдруг он был накручен)
+                TweenMax.to(parent, 0, { rotationY: c*90, transformOrigin:"50% 50%" });
+                if (c!=0) {
+                    // Разворачиваем контейнер в нулевое положение
+                    tl.to(parent, .2, { rotationY:0, transformOrigin:"50% 50%" });
+                }
+                // Убираем за край экрана поворачивая по левой кромке
+                tl.to(parent, .3, { rotationY:90, transformOrigin:"left top", x: -width, autoAlpha:0 });
+
+                tl2.to(container, .5, { autoAlpha: 0 })
+                    .to(container, 0, {display: 'none'});
+
+                ang = 0;
+            }
+        },
         rotateRight: function() {
-            rotateCube(angleManager.right());
+            if (visible)
+                rotateCube(angleManager.right());
         },
         rotateLeft: function() {
-            rotateCube(angleManager.left());
+            if (visible)
+                rotateCube(angleManager.left());
         },
         rotateToFace: function( n ) {
-            rotateCube(angleManager.face(n));
+            if (visible)
+                rotateCube(angleManager.face(n));
+        },
+        isVisible: function() {
+            return visible;
         }
     }
 }

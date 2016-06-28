@@ -111,7 +111,7 @@ gulp.task('css', function() {
         .pipe(livereload(server));
 });
 
-// Сборка CSS
+// Сборка fonts
 gulp.task('fonts', function() {
     gulp.src(['./assets/fonts/*.*'])
         .pipe(gulp.dest('./public/fonts'))
