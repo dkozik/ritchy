@@ -25,6 +25,9 @@ div(id="sidenav" ng-controller="sidenav")
                 md-button(class="md-fab not-enabled" aria-label="Helpdesk")
                     img(src="./img/icons/u406.png")
                 span Helpdesk
-        div(class="sidenav-face" id="face2")
-        div(class="sidenav-face" id="face3")
-        div(class="sidenav-face" id="face4")
+            div(class="block-footer")
+                img(src="./img/icons/u454.png")
+                span &nbsp;&nbsp;&nbsp;EN
+        div(class="sidenav-face" id="face2" ng-click="rotate()")
+        div(class="sidenav-face" id="face3" ng-click="rotate()")
+        div(class="sidenav-face" id="face4" ng-click="rotate()")
