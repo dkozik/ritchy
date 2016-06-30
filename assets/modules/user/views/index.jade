@@ -1,8 +1,8 @@
 //
    Created by admin on 21.06.2016.
 
+div(rcontent="user_menu")
 div(id="user-info" ng-controller="user" ng-cloak)
-    include ./include/menu.jade
     div(class="content")
         div(id="avatar_block" class="mui-panel")
             div(class="caption md-title") Userpic
@@ -127,4 +127,4 @@ div(id="user-info" ng-controller="user" ng-cloak)
                     label New password one more time
                     input(type="password")
             md-button(class="md-raised md-primary") Save password
-    include ./include/footer.jade
+    include ../include/views/footer.jade

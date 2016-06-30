@@ -3,12 +3,13 @@
  */
 (function() {
 
-    RitchyApp.factory('RitchySidebar', ['$templateRequest', function( $templateRequest ) {
+    RitchyApp.factory('RitchySidebar', ['$templateRequest', 'RitchyCore', function( $templateRequest, RitchyCore ) {
         var sideBarLoaded = false;
 
         function loadSideBar() {
             if (!sideBarLoaded) {
-                var $coreScope = angular.element(document.querySelector('body>div[ng-controller="core"]')).scope();
+                //var $coreScope = angular.element(document.querySelector('body>div[ng-controller="core"]')).scope();
+                var $coreScope = RitchyCore.getCoreScope();
                 sideBarLoaded = true;
                 $templateRequest('/modules/sidenav/views/index.html', false).then(function (html) {
                     $coreScope.sidenav = html;

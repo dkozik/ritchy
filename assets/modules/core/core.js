@@ -110,6 +110,13 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 if (callback) {
                     tl.call(callback);
                 }
+            },
+            pushLeft: function( target, left ) {
+                var tl = new TimelineMax();
+                var width = target.offsetWidth;
+console.log('pushLeft executed, left: ',left,' width: ',width);
+                TweenLite.set(target, { left: -100 });
+                tl.to(target, 0.5, { left: left, ease: Back.easeOut.config(2.2) });
             }
         }
     }]);
@@ -655,6 +662,14 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                     }
                     onError && onError(response, message);
                 } );
+            }
+        }
+    }]);
+
+    RitchyApp.factory('RitchyCore', ['$http', '$rootScope', function($http, $rootScope) {
+        return {
+            getCoreScope: function() {
+                return $rootScope;
             }
         }
     }]);
