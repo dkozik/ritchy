@@ -23,14 +23,13 @@
         }
     }]);
 
-    RitchyApp.controller('userMenu', ['$scope', '$element', 'RitchySidebar', 'RitchyAnim',
-        function($scope, $element, RitchySidebar, RitchyAnim) {
-            $scope.$on('$viewContentLoaded', function(event) {
-console.log('viewContentLoaded');
-            });
-            angular.element(document).ready(function() {
-console.log('clientWidth: ',$element[0].clientWidth);
-//                RitchyAnim.pushLeft( $element, 0 );
+    RitchyApp.controller('userMenu', ['$scope', '$element', '$timeout', 'RitchySidebar', 'RitchyAnim',
+        function($scope, $element, $timeout, RitchySidebar, RitchyAnim) {
+            $element.css('left', '-1000px');
+            angular.element($element).ready(function() {
+                $timeout(function() {
+                    RitchyAnim.pushLeft( $element, 0 );
+                });
             });
 
             // 1. Push bg from left

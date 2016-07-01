@@ -113,10 +113,10 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
             },
             pushLeft: function( target, left ) {
                 var tl = new TimelineMax();
-                var width = target.offsetWidth;
-console.log('pushLeft executed, left: ',left,' width: ',width);
-                TweenLite.set(target, { left: -100 });
-                tl.to(target, 0.5, { left: left, ease: Back.easeOut.config(2.2) });
+                var width = target.prop("offsetWidth") || -500;
+
+                TweenLite.set(target, { left:  -width });
+                tl.to(target, 0.7, { left: left, ease: Back.easeOut.config(1.5) });
             }
         }
     }]);
