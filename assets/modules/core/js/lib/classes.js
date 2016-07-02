@@ -36,6 +36,10 @@ var Cube = function( container, parent, face1, face2, face3, face4 ) {
                 ang-=90;
                 return ang;
             },
+            around: function() {
+                ang+=360;
+                return ang;
+            },
             face: function( n ) {
                 // 0..90..180..360
                 var c = (ang / 90) % 4; // 0..1..2..3
@@ -57,11 +61,14 @@ var Cube = function( container, parent, face1, face2, face3, face4 ) {
         }
     })();
 
-    var rotateCube = function( ang ) {
+    var rotateCube = function( ang, t1, t2, t3 ) {
         var tl = new TimelineLite();
-        tl.to([face1, face2, face3, face4], .2, {autoAlpha : 0.6})
-            .to([face1, face2, face3, face4], .3, {autoAlpha : 1});
-        TweenMax.to(parent, 0.5, { rotationY: ang,  transformOrigin:"50% 50%", ease: Back.easeOut.config(1.6) });
+        t1 = t1 || .2;
+        t2 = t2 || .3;
+        t3 = t3 || .5;
+        tl.to([face1, face2, face3, face4], t1, {autoAlpha : 0.6})
+          .to([face1, face2, face3, face4], t2, {autoAlpha : 1});
+        TweenMax.to(parent, t3, { rotationY: ang,  transformOrigin:"50% 50%", ease: Back.easeOut.config(1.6) });
     };
 
     return {
@@ -89,7 +96,7 @@ var Cube = function( container, parent, face1, face2, face3, face4 ) {
                 tl.to(parent, .3, { rotationY:90, transformOrigin:"left top", x: -width, autoAlpha:0 });
 
                 tl2.to(container, .5, { autoAlpha: 0 })
-                    .to(container, 0, {display: 'none'});
+                   .to(container, 0, {display: 'none'});
 
                 ang = 0;
             }
@@ -105,6 +112,10 @@ var Cube = function( container, parent, face1, face2, face3, face4 ) {
         rotateToFace: function( n ) {
             if (visible)
                 rotateCube(angleManager.face(n));
+        },
+        rotateAround: function() {
+            if (visible)
+                rotateCube(angleManager.around(), .5, .5, 1.2);
         },
         isVisible: function() {
             return visible;

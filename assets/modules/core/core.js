@@ -99,14 +99,25 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
             easeIn: function( target ) {
                 var tl = new TimelineMax();
                 TweenLite.set(target, {scale: 0.5, autoAlpha:0});
-                tl.to(target, 0.3, {autoAlpha: 1});
-                tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0), autoRound: false}, 0);
+                tl.to(target, 0.5, {scale: 1, ease: Back.easeOut.config(0), autoRound: false, autoAlpha: 1}, 0);
             },
             easeOut: function( target, callback ) {
                 var tl = new TimelineMax();
-                TweenLite.set(target, {scale: 1, rotation: 0.1, autoAlpha: 1});
-                tl.to(target, 0.2, {autoAlpha: 0});
-                tl.to(target, 0.2, {scale: 0.5, ease: Back.easeOut.config(0.6), autoRound: false}, 0);
+                TweenLite.set(target, {scale: 1, autoAlpha: 1});
+                tl.to(target, 0.4, {scale: 0.5, ease: Back.easeOut.config(0.6), autoRound: false, autoAlpha: 0}, 0);
+                if (callback) {
+                    tl.call(callback);
+                }
+            },
+            fadeIn: function( target ) {
+                var tl = new TimelineMax();
+                TweenLite.set(target, { autoAlpha: 0 });
+                tl.to(target, .2, { autoAlpha: 1 });
+            },
+            fadeOut: function( target, callback ) {
+                var tl = new TimelineMax();
+                TweenLite.set(target, { autoAlpha: 1 });
+                tl.to(target, .2, { autoAlpha: 0 });
                 if (callback) {
                     tl.call(callback);
                 }
@@ -670,6 +681,9 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
         return {
             getCoreScope: function() {
                 return $rootScope;
+            },
+            getModulesBase: function() {
+                return modulesBase;
             }
         }
     }]);
@@ -710,6 +724,7 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                     RitchyDialog.showAlert(ev, 'API error', 'Error when logout: '+response.data.error, callback);
                 } else {
                     isUserAuth = false;
+                    firstStatLoaded = false;
                     callback && callback(isUserAuth);
                 }
             }, function onError( response, message ) {
@@ -818,9 +833,10 @@ var RitchyApp = angular.module('Ritchy', ['ngRoute', 'ngMaterial', 'ngMessages']
                 })
                 .when('/logout', {
                     template: '', // Шаблон нужно указывать обязательно, иначе этот маршрут не заработает
-                    controller: ['$scope', '$http', '$location', 'RitchyAuth',
-                        function($scope, $http, $location, RitchyAuth) {
+                    controller: ['$scope', '$rootScope', '$location', 'RitchyAuth',
+                        function($scope, $rootScope, $location, RitchyAuth) {
                         RitchyAuth.doLogout(function onLogout() {
+                            $rootScope.$broadcast('app.onlogout');
                             // Переадресация после выода на страницу входа
                             $location.path('/login');
                         });

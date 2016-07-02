@@ -10,12 +10,13 @@ div(class="menu-container" ng-controller="userMenu" ng-cloak)
                 p &nbsp;
             div(class="md-body-1")
                 p Thomson Reuters Company, ltd
-        div(class="menu-item")
+        div(class="menu-item menu-link" ng-click="goto_details()")
             div Account details
-        div(class="menu-item")
+        div(class="menu-item menu-link" ng-click="goto_pricelist()")
             div My pricelist
-        div(class="menu-item")
+        div(class="menu-item menu-link" ng-click="goto_discounts()")
             div My discounts
-        div(class="menu-item")
-            div(style="display: inline") Logout
-            img(src="./img/icons/u189.png" style="margin-left: 10px")
+        div(class="menu-item menu-link" ng-click="goto_logout()")
+            div
+                div(style="display: inline") Logout
+                img(src="./img/icons/u189.png" style="margin-left: 10px")

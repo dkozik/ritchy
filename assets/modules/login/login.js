@@ -25,7 +25,8 @@
                         // TODO: Redirect to first requested page before redirected to /login
                         RitchyAnim.easeOut(target, function() {
                             $rootScope.$apply(function() {
-                                $location.path('/core');
+                                $rootScope.$broadcast('app.onlogin');
+                                $location.path('/user');
                             });
                         });
                     } else if (response.data.error>'') {

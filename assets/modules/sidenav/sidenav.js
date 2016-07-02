@@ -11,7 +11,7 @@
                 //var $coreScope = angular.element(document.querySelector('body>div[ng-controller="core"]')).scope();
                 var $coreScope = RitchyCore.getCoreScope();
                 sideBarLoaded = true;
-                $templateRequest('/modules/sidenav/views/index.html', false).then(function (html) {
+                $templateRequest(RitchyCore.getModulesBase()+'/sidenav/views/index.html', false).then(function (html) {
                     $coreScope.sidenav = html;
                 });
             }
@@ -25,18 +25,28 @@
 
     }]);
 
-    RitchyApp.controller('sidenav', ['$scope', '$document', '$element', 'RitchyAnim',
-        function($scope, $document, $element, RitchyAnim) {
+    RitchyApp.controller('sidenav', ['$scope', '$rootScope', '$document', '$element', 'RitchyAnim',
+        function($scope, $rootScope, $document, $element, RitchyAnim) {
             
             var container = $element;
             var parent = document.querySelector('div#sidenav-parent');
             var faces = document.querySelectorAll('div.sidenav-face');
-            var cube = new Cube(container, parent, faces);
+            $scope.cube = new Cube(container, parent, faces);
 
-            cube.show();
+            $scope.cube.show();
+
+            $rootScope.RitchySidenav = $scope;
+
+            $rootScope.$on('app.onlogout', function() {
+                $scope.cube.hide();
+            });
+
+            $rootScope.$on('app.onlogin', function() {
+                $scope.cube.show();
+            });
 
             $scope.rotate = function() {
-                cube.rotateLeft();
+                $scope.cube.rotateLeft();
             }
 
     }]);
